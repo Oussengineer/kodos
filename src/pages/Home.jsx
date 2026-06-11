@@ -1,21 +1,18 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getProducts, getCategories } from "../api/products";
-import ProductCard from "../components/ProductCard";
+import { getRestaurants } from "../api/restaurants";
+
+const TYPE_ICONS = { restaurant: "🍽️", grocery: "🛒" };
 
 export default function Home() {
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [restaurants, setRestaurants] = useState([]);
+  const [activeTab, setActiveTab] = useState("restaurants");
 
   useEffect(() => {
-    getProducts().then(setProducts).catch(() => {});
-    getCategories().then(setCategories).catch(() => {});
+    getRestaurants().then(setRestaurants).catch(() => {});
   }, []);
 
-  const filtered = activeCategory === "All"
-    ? products
-    : products.filter((p) => p.category === activeCategory);
+  const filtered = restaurants.filter((r) => r.type === activeTab);
 
   return (
     <div className="page home">
@@ -24,32 +21,45 @@ export default function Home() {
         <p className="subtitle">Fresh food, delivered fast</p>
       </header>
 
-      <div className="categories">
+      <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
         <button
-          className={`chip ${activeCategory === "All" ? "chip-active" : ""}`}
-          onClick={() => setActiveCategory("All")}
-        >
-          All
-        </button>
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            className={`chip ${activeCategory === cat ? "chip-active" : ""}`}
-            onClick={() => setActiveCategory(cat)}
-          >
-            {cat}
-          </button>
-        ))}
+          className={`chip ${activeTab === "restaurants" ? "chip-active" : ""}`}
+          onClick={() => setActiveTab("restaurants")}
+        >🍽️ Restaurants</button>
+        <button
+          className={`chip ${activeTab === "grocery" ? "chip-active" : ""}`}
+          onClick={() => setActiveTab("grocery")}
+        >🛒 Grocery</button>
       </div>
 
-      <div className="products-grid">
-        {filtered.map((p) => (
-          <ProductCard key={p.id} product={p} />
-        ))}
-      </div>
-
-      {products.length === 0 && (
-        <p className="empty-state">Loading delicious food...</p>
+      {filtered.length === 0 ? (
+        <div className="empty-state"><p>Loading...</p></div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {filtered.map((r) => (
+            <Link
+              key={r.id}
+              to={`/${activeTab === "grocery" ? "grocery" : "restaurant"}/${r.id}`}
+              style={{
+                display: "flex", gap: 12, background: "var(--surface)", borderRadius: "var(--radius)",
+                boxShadow: "var(--shadow)", padding: 12, textDecoration: "none", color: "inherit",
+              }}
+            >
+              <img src={r.image} alt={r.name} style={{ width: 80, height: 80, borderRadius: 8, objectFit: "cover" }} loading="lazy" />
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <h3 style={{ fontSize: ".95rem", fontWeight: 700 }}>{r.name}</h3>
+                  <span style={{ fontSize: ".8rem", color: "#f39c12" }}>★ {r.rating}</span>
+                </div>
+                <p style={{ fontSize: ".8rem", color: "var(--text-muted)", margin: "4px 0" }}>{r.description}</p>
+                <div style={{ display: "flex", gap: 8, fontSize: ".75rem", color: "var(--text-muted)" }}>
+                  <span>🕐 {r.deliveryTime}</span>
+                  <span>🚚 ${r.deliveryFee.toFixed(2)}</span>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
       )}
     </div>
   );

@@ -7,6 +7,7 @@ import productRoutes from "./routes/products.js";
 import orderRoutes from "./routes/orders.js";
 import adminRoutes from "./routes/admin.js";
 import driverRoutes from "./routes/driver.js";
+import restaurantRoutes from "./routes/restaurants.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -20,6 +21,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/driver", driverRoutes);
+app.use("/api/restaurants", restaurantRoutes);
 
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
 

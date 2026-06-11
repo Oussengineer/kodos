@@ -1,7 +1,7 @@
 import client from "./client";
 
-export const getProducts = (category) =>
-  client.get("/products", { params: { category } }).then((r) => r.data);
+export const getProducts = (params = {}) =>
+  client.get("/products", { params }).then((r) => r.data);
 
 export const getCategories = () =>
   client.get("/products/categories").then((r) => r.data);

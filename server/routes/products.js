@@ -11,10 +11,11 @@ router.get("/", async (req, res) => {
     const products = JSON.parse(data);
     const reviewsData = await readFile(REVIEWS_PATH, "utf-8").catch(() => "[]");
     const allReviews = JSON.parse(reviewsData);
-    const { category } = req.query;
-    let filtered = category
-      ? products.filter((p) => p.category.toLowerCase() === category.toLowerCase())
-      : products;
+    const { category, restaurantId, type } = req.query;
+    let filtered = products;
+    if (category) filtered = filtered.filter((p) => p.category.toLowerCase() === category.toLowerCase());
+    if (restaurantId) filtered = filtered.filter((p) => p.restaurantId === Number(restaurantId));
+    if (type) filtered = filtered.filter((p) => p.type === type);
     const withRatings = filtered.map((p) => {
       const productReviews = allReviews.filter((r) => r.productId === p.id);
       const avgRating = productReviews.length

@@ -1,0 +1,39 @@
+import { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
+import { getRestaurant } from "../api/restaurants";
+import { getProducts } from "../api/products";
+import ProductCard from "../components/ProductCard";
+
+export default function RestaurantDetail() {
+  const { id } = useParams();
+  const [restaurant, setRestaurant] = useState(null);
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    getRestaurant(id).then(setRestaurant).catch(() => {});
+    getProducts({ restaurantId: id }).then(setProducts).catch(() => {});
+  }, [id]);
+
+  if (!restaurant) return <div className="page"><div className="empty-state"><p>Loading...</p></div></div>;
+
+  return (
+    <div className="page">
+      <Link to="/" className="back-link">← Back</Link>
+      <div style={{ display: "flex", gap: 12, marginBottom: 16, alignItems: "center" }}>
+        <img src={restaurant.image} alt={restaurant.name} style={{ width: 64, height: 64, borderRadius: 8, objectFit: "cover" }} />
+        <div>
+          <h1 style={{ fontSize: "1.3rem" }}>{restaurant.name}</h1>
+          <p style={{ fontSize: ".8rem", color: "var(--text-muted)" }}>{restaurant.description}</p>
+          <div style={{ display: "flex", gap: 8, fontSize: ".75rem", color: "var(--text-muted)", marginTop: 4 }}>
+            <span>★ {restaurant.rating}</span>
+            <span>🕐 {restaurant.deliveryTime}</span>
+            <span>🚚 ${restaurant.deliveryFee.toFixed(2)}</span>
+          </div>
+        </div>
+      </div>
+      <div className="products-grid">
+        {products.map((p) => <ProductCard key={p.id} product={p} />)}
+      </div>
+    </div>
+  );
+}
