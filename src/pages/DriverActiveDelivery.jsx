@@ -1,13 +1,25 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
-import { getActiveDeliveries, updateDeliveryStatus } from "../api/driver";
+import { getActiveDeliveries, updateDeliveryStatus, updateDriverLocation } from "../api/driver";
 import { useDriverStore } from "../store/useDriverStore";
+import L from "leaflet";
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+});
 
 export default function DriverActiveDelivery() {
   const [deliveries, setDeliveries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(null);
   const setActiveDeliveries = useDriverStore((s) => s.setActiveDeliveries);
+  const mapRef = useRef(null);
+  const mapInstanceRef = useRef(null);
+  const destMarkerRef = useRef(null);
+  const watchIdRef = useRef(null);
 
   const fetchActive = useCallback(() => {
     getActiveDeliveries()
@@ -24,6 +36,59 @@ export default function DriverActiveDelivery() {
     const interval = setInterval(fetchActive, 10000);
     return () => clearInterval(interval);
   }, [fetchActive]);
+
+  // GPS tracking
+  useEffect(() => {
+    if (deliveries.length === 0) {
+      if (watchIdRef.current != null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+        watchIdRef.current = null;
+      }
+      return;
+    }
+
+    const orderIds = deliveries.map((o) => o.id);
+    watchIdRef.current = navigator.geolocation.watchPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        for (const orderId of orderIds) {
+          updateDriverLocation(latitude, longitude, orderId).catch(() => {});
+        }
+      },
+      () => {},
+      { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 }
+    );
+
+    return () => {
+      if (watchIdRef.current != null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+        watchIdRef.current = null;
+      }
+    };
+  }, [deliveries]);
+
+  // map for first delivery destination
+  useEffect(() => {
+    const first = deliveries[0];
+    if (!first || !first.latitude || !first.longitude) return;
+    if (!mapRef.current) return;
+
+    if (!mapInstanceRef.current) {
+      const map = L.map(mapRef.current).setView([first.latitude, first.longitude], 13);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors",
+      }).addTo(map);
+      mapInstanceRef.current = map;
+    }
+
+    if (destMarkerRef.current) destMarkerRef.current.setLatLng([first.latitude, first.longitude]);
+    else {
+      destMarkerRef.current = L.marker([first.latitude, first.longitude])
+        .addTo(mapInstanceRef.current)
+        .bindPopup(`Delivery: ${first.address}`);
+    }
+    mapInstanceRef.current.setView([first.latitude, first.longitude]);
+  }, [deliveries]);
 
   const handleDelivered = async (id) => {
     setUpdating(id);
@@ -59,6 +124,14 @@ export default function DriverActiveDelivery() {
     <div className="page driver-active">
       <h2>Active Deliveries</h2>
       <p className="subtitle">{deliveries.length} delivery in progress</p>
+
+      {/* destination map */}
+      {deliveries[0]?.latitude && deliveries[0]?.longitude && (
+        <div className="order-section">
+          <h3>Delivery Destination</h3>
+          <div ref={mapRef} style={{ height: 200, borderRadius: 8, zIndex: 1 }} />
+        </div>
+      )}
 
       <div className="driver-orders-list">
         {deliveries.map((order) => (

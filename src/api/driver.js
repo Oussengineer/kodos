@@ -14,3 +14,6 @@ export const acceptOrder = (id) =>
 
 export const updateDeliveryStatus = (id, status) =>
   client.patch(`/driver/orders/${id}/status`, { status }).then((r) => r.data);
+
+export const updateDriverLocation = (lat, lng, orderId) =>
+  client.put("/driver/location", { lat, lng, orderId }).then((r) => r.data);

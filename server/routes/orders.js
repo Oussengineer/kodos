@@ -25,13 +25,15 @@ function auth(req, res, next) {
 router.post("/", auth, async (req, res) => {
   try {
     const orders = await getOrders();
-    const { items, address, total } = req.body;
+    const { items, address, total, latitude, longitude } = req.body;
     const order = {
       id: Date.now(),
       userId: req.userId,
       items,
       address,
       total,
+      latitude: latitude || null,
+      longitude: longitude || null,
       status: "pending",
       createdAt: new Date().toISOString(),
     };

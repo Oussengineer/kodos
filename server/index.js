@@ -23,6 +23,39 @@ app.use("/api/driver", driverRoutes);
 
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
 
+// In-memory driver location store { driverId: { lat, lng, updatedAt, orderId } }
+const driverLocations = new Map();
+
+app.put("/api/driver/location", (req, res) => {
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith("token-")) return res.sendStatus(401);
+  const driverId = Number(auth.split("token-")[1]);
+  const { lat, lng, orderId } = req.body;
+  if (lat == null || lng == null) return res.status(400).json({ error: "lat and lng required" });
+  driverLocations.set(driverId, { lat, lng, orderId, updatedAt: new Date().toISOString() });
+  res.json({ ok: true });
+});
+
+app.get("/api/driver/location/:driverId", (req, res) => {
+  const loc = driverLocations.get(Number(req.params.driverId));
+  res.json(loc || null);
+});
+
+app.get("/api/orders/:id/driver-location", async (req, res) => {
+  try {
+    const { readFile } = await import("node:fs/promises");
+    const ORDERS_PATH = new URL("./data/orders.json", import.meta.url);
+    const data = await readFile(ORDERS_PATH, "utf-8");
+    const orders = JSON.parse(data);
+    const order = orders.find((o) => o.id === Number(req.params.id));
+    if (!order || !order.driverId) return res.json(null);
+    const loc = driverLocations.get(order.driverId);
+    res.json(loc || null);
+  } catch {
+    res.json(null);
+  }
+});
+
 const distDir = path.resolve(__dirname, "..", "dist");
 
 const apps = [
