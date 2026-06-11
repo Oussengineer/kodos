@@ -37,7 +37,7 @@ export default function Orders() {
         <h1>Orders</h1>
         <div className="empty-state">
           <p>No orders yet</p>
-          <Link to="/menu" className="btn-primary">Start Ordering</Link>
+          <Link to="/" className="btn-primary">Start Ordering</Link>
         </div>
       </div>
     );

@@ -34,7 +34,7 @@ export default function Cart() {
         <h1>Cart</h1>
         <div className="empty-state">
           <p>Your cart is empty</p>
-          <button className="btn-primary" onClick={() => navigate("/menu")}>
+            <button className="btn-primary" onClick={() => navigate("/")}>
             Browse Menu
           </button>
         </div>
