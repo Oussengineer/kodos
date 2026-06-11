@@ -8,8 +8,7 @@ export default function Layout() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   const nav = [
-    { path: "/", label: "Home", icon: "🏠" },
-    { path: "/menu", label: "Menu", icon: "🍽️" },
+    { path: "/", label: "Menu", icon: "🍽️" },
     { path: "/cart", label: "Cart", icon: "🛒", badge: itemCount },
     { path: "/orders", label: "Orders", icon: "📋" },
     { path: "/profile", label: "Profile", icon: "👤" },
