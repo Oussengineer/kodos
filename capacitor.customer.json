@@ -1,0 +1,8 @@
+{
+  "appId": "com.kodos.customer",
+  "appName": "Kodos",
+  "webDir": "dist/customer",
+  "server": {
+    "androidScheme": "https"
+  }
+}

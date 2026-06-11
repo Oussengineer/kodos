@@ -1,0 +1,52 @@
+{
+  "name": "kodos",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:admin": "set VITE_APP=admin&& vite",
+    "dev:driver": "set VITE_APP=driver&& vite",
+    "build": "vite build",
+    "build:customer": "set VITE_APP=customer&& vite build && copy /Y dist\\customer\\customer.html dist\\customer\\index.html",
+    "build:admin": "set VITE_APP=admin&& vite build && copy /Y dist\\admin\\admin.html dist\\admin\\index.html",
+    "build:driver": "set VITE_APP=driver&& vite build && copy /Y dist\\driver\\driver.html dist\\driver\\index.html",
+    "build:all": "npm run build:customer && npm run build:admin && npm run build:driver",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "cap:add:admin": "copy /Y capacitor.admin.json capacitor.config.json && node node_modules/@capacitor/cli/bin/capacitor add android",
+    "cap:add:driver": "copy /Y capacitor.driver.json capacitor.config.json && node node_modules/@capacitor/cli/bin/capacitor add android",
+    "cap:sync:customer": "copy /Y capacitor.customer.json capacitor.config.json && node node_modules/@capacitor/cli/bin/capacitor sync android",
+    "cap:sync:admin": "copy /Y capacitor.admin.json capacitor.config.json && node node_modules/@capacitor/cli/bin/capacitor sync android",
+    "cap:sync:driver": "copy /Y capacitor.driver.json capacitor.config.json && node node_modules/@capacitor/cli/bin/capacitor sync android",
+    "cap:open:customer": "copy /Y capacitor.customer.json capacitor.config.json && node node_modules/@capacitor/cli/bin/capacitor open android",
+    "cap:open:admin": "copy /Y capacitor.admin.json capacitor.config.json && node node_modules/@capacitor/cli/bin/capacitor open android",
+    "cap:open:driver": "copy /Y capacitor.driver.json capacitor.config.json && node node_modules/@capacitor/cli/bin/capacitor open android",
+    "apk:customer": "npm run build:customer && npm run cap:sync:customer && copy /Y capacitor.customer.json capacitor.config.json && cd android && .\\gradlew assembleDebug",
+    "apk:admin": "npm run build:admin && npm run cap:sync:admin && copy /Y capacitor.admin.json capacitor.config.json && cd android-admin && .\\gradlew assembleDebug",
+    "apk:driver": "npm run build:driver && npm run cap:sync:driver && copy /Y capacitor.driver.json capacitor.config.json && cd android-driver && .\\gradlew assembleDebug",
+    "apk:all": "npm run build:all && npm run apk:customer && npm run apk:admin && npm run apk:driver"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.4.0",
+    "@capacitor/cli": "^8.4.0",
+    "@capacitor/core": "^8.4.0",
+    "axios": "^1.17.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-router-dom": "^7.17.0",
+    "zustand": "^5.0.14"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "eslint": "^10.3.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.6.0",
+    "vite": "^8.0.12",
+    "vite-plugin-pwa": "^1.3.0"
+  }
+}

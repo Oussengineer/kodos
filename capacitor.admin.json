@@ -1,0 +1,11 @@
+{
+  "appId": "com.kodos.admin",
+  "appName": "Kodos Admin",
+  "webDir": "dist/admin",
+  "android": {
+    "path": "android-admin"
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}

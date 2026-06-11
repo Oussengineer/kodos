@@ -1,0 +1,11 @@
+{
+  "appId": "com.kodos.driver",
+  "appName": "Kodos Driver",
+  "webDir": "dist/driver",
+  "android": {
+    "path": "android-driver"
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}

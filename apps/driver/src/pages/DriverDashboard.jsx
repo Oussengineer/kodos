@@ -1,0 +1,96 @@
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { getAvailableOrders, acceptOrder } from "../api/driver";
+import { useDriverStore } from "../store/useDriverStore";
+
+const STATUS_COLORS = {
+  preparing: { bg: "#fff3cd", color: "#856404", label: "Preparing" },
+  out_for_delivery: { bg: "#cce5ff", color: "#004085", label: "Ready for Pickup" },
+};
+
+export default function DriverDashboard() {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [accepting, setAccepting] = useState(null);
+  const setActiveDeliveries = useDriverStore((s) => s.setActiveDeliveries);
+  const navigate = useNavigate();
+
+  const fetchOrders = useCallback(() => {
+    getAvailableOrders()
+      .then(setOrders)
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    fetchOrders();
+    const interval = setInterval(fetchOrders, 15000);
+    return () => clearInterval(interval);
+  }, [fetchOrders]);
+
+  const handleAccept = async (id) => {
+    setAccepting(id);
+    try {
+      await acceptOrder(id);
+      setActiveDeliveries([]);
+      navigate("/driver/active");
+    } catch {
+      setAccepting(null);
+      fetchOrders();
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="page">
+        <div className="empty-state"><p>Loading available orders...</p></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="page driver-dashboard">
+      <h2>Available Orders</h2>
+      <p className="subtitle">Orders ready for delivery</p>
+
+      {orders.length === 0 && (
+        <div className="empty-state">
+          <p>No orders available right now</p>
+        </div>
+      )}
+
+      <div className="driver-orders-list">
+        {orders.map((order) => {
+          const status = STATUS_COLORS[order.status] || STATUS_COLORS.preparing;
+          return (
+            <div key={order.id} className="driver-order-card">
+              <div className="driver-order-top">
+                <span className="driver-customer">{order.customerName}</span>
+                <span
+                  className="driver-status-badge"
+                  style={{ background: status.bg, color: status.color }}
+                >
+                  {status.label}
+                </span>
+              </div>
+              <p className="driver-order-items">
+                {order.items.map((i) => `${i.name} ×${i.quantity}`).join(", ")}
+              </p>
+              <div className="driver-order-meta">
+                <span>📍 {order.address}</span>
+                <span className="driver-order-total">${order.total.toFixed(2)}</span>
+              </div>
+              <button
+                className="btn-primary"
+                onClick={() => handleAccept(order.id)}
+                disabled={accepting === order.id}
+              >
+                {accepting === order.id ? "Accepting..." : "Accept Delivery"}
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
