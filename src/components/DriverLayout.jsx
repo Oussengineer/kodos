@@ -8,16 +8,16 @@ export default function DriverLayout() {
   const activeCount = useDriverStore((s) => s.activeDeliveries.length);
 
   const nav = [
-    { path: "/driver", label: "Available", icon: "📋" },
-    { path: "/driver/active", label: "Active", icon: "🚚", badge: activeCount },
-    { path: "/driver/history", label: "History", icon: "📦" },
+    { path: "/", label: "Available", icon: "📋" },
+    { path: "/active", label: "Active", icon: "🚚", badge: activeCount },
+    { path: "/history", label: "History", icon: "📦" },
   ];
 
   return (
     <div className="app-layout">
       <header className="driver-header">
         <span className="driver-greeting">Hey, {user?.name?.split(" ")[0] || "Driver"}</span>
-        <Link to="/driver/profile" className="driver-profile-link">👤</Link>
+        <Link to="/login" className="driver-profile-link">👤</Link>
       </header>
       <main className="main-content">
         <Outlet />
