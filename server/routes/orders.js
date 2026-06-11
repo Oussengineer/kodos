@@ -34,7 +34,7 @@ router.post("/", auth, async (req, res) => {
       total,
       latitude: latitude || null,
       longitude: longitude || null,
-      status: "preparing",
+      status: "pending",
       createdAt: new Date().toISOString(),
     };
     orders.push(order);

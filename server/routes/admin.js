@@ -36,11 +36,12 @@ router.get("/stats", adminAuth, async (_req, res) => {
     const products = await getJSON(PRODUCTS_PATH);
     const totalOrders = orders.length;
     const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
+    const pendingOrders = orders.filter((o) => o.status === "pending").length;
     const preparingOrders = orders.filter((o) => o.status === "preparing").length;
     const outForDelivery = orders.filter((o) => o.status === "out_for_delivery").length;
     const deliveredOrders = orders.filter((o) => o.status === "delivered").length;
     const totalProducts = products.length;
-    res.json({ totalOrders, totalRevenue, preparingOrders, outForDelivery, deliveredOrders, totalProducts });
+    res.json({ totalOrders, totalRevenue, pendingOrders, preparingOrders, outForDelivery, deliveredOrders, totalProducts });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -65,7 +66,7 @@ router.patch("/orders/:id/status", adminAuth, async (req, res) => {
     const orders = await getJSON(ORDERS_PATH);
     const idx = orders.findIndex((o) => o.id === Number(req.params.id));
     if (idx === -1) return res.status(404).json({ error: "Order not found" });
-    const allowed = { confirmed: true, preparing: true, cancelled: true };
+    const allowed = { pending: true, confirmed: true, preparing: true, cancelled: true };
     if (!allowed[req.body.status]) {
       return res.status(403).json({ error: "Admin can only confirm/prepare orders. Delivery is handled by drivers." });
     }
