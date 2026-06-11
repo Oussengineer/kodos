@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getAllOrders, updateOrderStatus } from "../../api/admin";
 
-const STATUS_FLOW = ["pending", "confirmed", "preparing", "out_for_delivery", "delivered"];
+const STATUS_FLOW = ["confirmed", "preparing"];
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
