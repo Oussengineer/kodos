@@ -5,6 +5,7 @@ const router = Router();
 const ORDERS_PATH = new URL("../data/orders.json", import.meta.url);
 const PRODUCTS_PATH = new URL("../data/products.json", import.meta.url);
 const USERS_PATH = new URL("../data/users.json", import.meta.url);
+const RESTAURANTS_PATH = new URL("../data/restaurants.json", import.meta.url);
 
 async function getJSON(path) {
   try {
@@ -41,7 +42,9 @@ router.get("/stats", adminAuth, async (_req, res) => {
     const outForDelivery = orders.filter((o) => o.status === "out_for_delivery").length;
     const deliveredOrders = orders.filter((o) => o.status === "delivered").length;
     const totalProducts = products.length;
-    res.json({ totalOrders, totalRevenue, pendingOrders, preparingOrders, outForDelivery, deliveredOrders, totalProducts });
+    const restaurants = await getJSON(RESTAURANTS_PATH);
+    const totalRestaurants = restaurants.length;
+    res.json({ totalOrders, totalRevenue, pendingOrders, preparingOrders, outForDelivery, deliveredOrders, totalProducts, totalRestaurants });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -120,6 +123,58 @@ router.delete("/products/:id", adminAuth, async (req, res) => {
     if (idx === -1) return res.status(404).json({ error: "Product not found" });
     const [deleted] = products.splice(idx, 1);
     await writeFile(PRODUCTS_PATH, JSON.stringify(products, null, 2));
+    res.json(deleted);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Restaurant CRUD
+router.get("/restaurants", adminAuth, async (_req, res) => {
+  try {
+    const data = await readFile(RESTAURANTS_PATH, "utf-8");
+    res.json(JSON.parse(data));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post("/restaurants", adminAuth, async (req, res) => {
+  try {
+    const data = await readFile(RESTAURANTS_PATH, "utf-8");
+    const restaurants = JSON.parse(data);
+    const maxId = restaurants.reduce((max, r) => Math.max(max, r.id), 0);
+    const restaurant = { id: maxId + 1, ...req.body };
+    restaurants.push(restaurant);
+    await writeFile(RESTAURANTS_PATH, JSON.stringify(restaurants, null, 2));
+    res.status(201).json(restaurant);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.put("/restaurants/:id", adminAuth, async (req, res) => {
+  try {
+    const data = await readFile(RESTAURANTS_PATH, "utf-8");
+    const restaurants = JSON.parse(data);
+    const idx = restaurants.findIndex((r) => r.id === Number(req.params.id));
+    if (idx === -1) return res.status(404).json({ error: "Restaurant not found" });
+    restaurants[idx] = { ...restaurants[idx], ...req.body };
+    await writeFile(RESTAURANTS_PATH, JSON.stringify(restaurants, null, 2));
+    res.json(restaurants[idx]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete("/restaurants/:id", adminAuth, async (req, res) => {
+  try {
+    const data = await readFile(RESTAURANTS_PATH, "utf-8");
+    const restaurants = JSON.parse(data);
+    const idx = restaurants.findIndex((r) => r.id === Number(req.params.id));
+    if (idx === -1) return res.status(404).json({ error: "Restaurant not found" });
+    const [deleted] = restaurants.splice(idx, 1);
+    await writeFile(RESTAURANTS_PATH, JSON.stringify(restaurants, null, 2));
     res.json(deleted);
   } catch (err) {
     res.status(500).json({ error: err.message });

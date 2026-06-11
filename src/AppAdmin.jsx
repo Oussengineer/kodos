@@ -5,6 +5,7 @@ import AdminOrders from "./pages/admin/Orders";
 import AdminProducts from "./pages/admin/Products";
 import AdminProductForm from "./pages/admin/ProductForm";
 import AdminLogin from "./pages/admin/AdminLogin";
+import AdminRestaurants from "./pages/admin/Restaurants";
 
 export default function AppAdmin() {
   return (
@@ -17,6 +18,7 @@ export default function AppAdmin() {
           <Route path="/products" element={<AdminProducts />} />
           <Route path="/products/new" element={<AdminProductForm />} />
           <Route path="/products/edit/:id" element={<AdminProductForm />} />
+          <Route path="/restaurants" element={<AdminRestaurants />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

@@ -20,3 +20,15 @@ export const updateProduct = (id, product) =>
 
 export const deleteProduct = (id) =>
   client.delete(`/admin/products/${id}`).then((r) => r.data);
+
+export const getAdminRestaurants = () =>
+  client.get("/admin/restaurants").then((r) => r.data);
+
+export const createRestaurant = (data) =>
+  client.post("/admin/restaurants", data).then((r) => r.data);
+
+export const updateRestaurant = (id, data) =>
+  client.put(`/admin/restaurants/${id}`, data).then((r) => r.data);
+
+export const deleteRestaurant = (id) =>
+  client.delete(`/admin/restaurants/${id}`).then((r) => r.data);

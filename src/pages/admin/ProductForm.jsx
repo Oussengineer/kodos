@@ -1,19 +1,21 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { getAdminProducts, createProduct, updateProduct } from "../../api/admin";
+import { getAdminProducts, createProduct, updateProduct, getAdminRestaurants } from "../../api/admin";
 
-const CATEGORIES = ["Pizza", "Burgers", "Sushi", "Salads", "Noodles", "Desserts", "Drinks"];
+const CATEGORIES = ["Pizza", "Burgers", "Sushi", "Salads", "Noodles", "Desserts", "Drinks", "Dairy", "Bakery", "Fruits"];
 
 export default function AdminProductForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
+  const [restaurants, setRestaurants] = useState([]);
   const [form, setForm] = useState({
     name: "", description: "", price: "", category: "Pizza",
-    image: "", rating: "4.0", prepTime: "",
+    image: "", rating: "4.0", prepTime: "", type: "food", restaurantId: 1,
   });
 
   useEffect(() => {
+    getAdminRestaurants().then(setRestaurants).catch(() => {});
     if (!isEdit) return;
     getAdminProducts().then((products) => {
       const p = products.find((x) => x.id === Number(id));
@@ -30,6 +32,7 @@ export default function AdminProductForm() {
       price: Number(form.price),
       rating: Number(form.rating),
       prepTime: Number(form.prepTime),
+      restaurantId: Number(form.restaurantId),
     };
     if (isEdit) {
       await updateProduct(id, payload);
@@ -55,6 +58,17 @@ export default function AdminProductForm() {
 
         <label>Price ($)</label>
         <input type="number" step="0.01" min="0" value={form.price} onChange={update("price")} required />
+
+        <label>Type</label>
+        <select value={form.type} onChange={update("type")}>
+          <option value="food">Food</option>
+          <option value="grocery">Grocery</option>
+        </select>
+
+        <label>Vendor</label>
+        <select value={form.restaurantId} onChange={update("restaurantId")}>
+          {restaurants.map((r) => <option key={r.id} value={r.id}>{r.name} ({r.type})</option>)}
+        </select>
 
         <label>Category</label>
         <select value={form.category} onChange={update("category")}>

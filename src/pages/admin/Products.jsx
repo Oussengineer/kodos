@@ -1,13 +1,17 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getAdminProducts, deleteProduct } from "../../api/admin";
+import { getAdminProducts, deleteProduct, getAdminRestaurants } from "../../api/admin";
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
+  const [restaurants, setRestaurants] = useState([]);
 
   useEffect(() => {
     getAdminProducts().then(setProducts).catch(() => {});
+    getAdminRestaurants().then(setRestaurants).catch(() => {});
   }, []);
+
+  const vendorName = (id) => restaurants.find((r) => r.id === id)?.name || "Unknown";
 
   const handleDelete = async (id) => {
     if (!confirm("Delete this product?")) return;
@@ -34,7 +38,7 @@ export default function AdminProducts() {
               <img src={p.image} alt={p.name} className="admin-product-img" />
               <div className="admin-product-info">
                 <h4>{p.name}</h4>
-                <p className="admin-product-cat">{p.category}</p>
+                <p className="admin-product-cat">{vendorName(p.restaurantId)} · {p.type} · {p.category}</p>
                 <span className="product-price">${p.price.toFixed(2)}</span>
               </div>
               <div className="admin-product-actions">

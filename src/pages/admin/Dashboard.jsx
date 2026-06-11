@@ -27,6 +27,7 @@ export default function AdminDashboard() {
     { label: "Out for Delivery", value: stats.outForDelivery, icon: "🚚", color: "#9b59b6" },
     { label: "Delivered", value: stats.deliveredOrders, icon: "📦", color: "#2ecc71" },
     { label: "Products", value: stats.totalProducts, icon: "🍽️", color: "#e74c3c" },
+    { label: "Vendors", value: stats.totalRestaurants, icon: "🏪", color: "#1abc9c" },
   ];
 
   return (
