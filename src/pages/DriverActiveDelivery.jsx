@@ -15,10 +15,12 @@ export default function DriverActiveDelivery() {
   const [deliveries, setDeliveries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(null);
+  const [driverPos, setDriverPos] = useState(null);
   const setActiveDeliveries = useDriverStore((s) => s.setActiveDeliveries);
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const destMarkerRef = useRef(null);
+  const driverMarkerRef = useRef(null);
   const watchIdRef = useRef(null);
 
   const fetchActive = useCallback(() => {
@@ -51,6 +53,7 @@ export default function DriverActiveDelivery() {
     watchIdRef.current = navigator.geolocation.watchPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
+        setDriverPos({ lat: latitude, lng: longitude });
         for (const orderId of orderIds) {
           updateDriverLocation(latitude, longitude, orderId).catch(() => {});
         }
@@ -67,7 +70,7 @@ export default function DriverActiveDelivery() {
     };
   }, [deliveries]);
 
-  // map for first delivery destination
+  // map for first delivery destination + driver position
   useEffect(() => {
     const first = deliveries[0];
     if (!first || !first.latitude || !first.longitude) return;
@@ -87,8 +90,31 @@ export default function DriverActiveDelivery() {
         .addTo(mapInstanceRef.current)
         .bindPopup(`Delivery: ${first.address}`);
     }
-    mapInstanceRef.current.setView([first.latitude, first.longitude]);
   }, [deliveries]);
+
+  // update driver marker on the map when GPS updates
+  useEffect(() => {
+    if (!driverPos || !mapInstanceRef.current) return;
+    if (driverMarkerRef.current) driverMarkerRef.current.setLatLng([driverPos.lat, driverPos.lng]);
+    else {
+      driverMarkerRef.current = L.marker([driverPos.lat, driverPos.lng], {
+        icon: L.divIcon({
+          className: "",
+          html: '<div style="background:#3498db;width:16px;height:16px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 4px rgba(0,0,0,.3)"></div>',
+          iconSize: [16, 16],
+          iconAnchor: [8, 8],
+        }),
+      }).addTo(mapInstanceRef.current).bindPopup("You");
+    }
+    // fit both markers
+    const first = deliveries[0];
+    if (first && first.latitude && first.longitude) {
+      mapInstanceRef.current.fitBounds([
+        [driverPos.lat, driverPos.lng],
+        [first.latitude, first.longitude],
+      ], { padding: [50, 50] });
+    }
+  }, [driverPos, deliveries]);
 
   const handleDelivered = async (id) => {
     setUpdating(id);

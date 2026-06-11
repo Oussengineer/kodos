@@ -29,11 +29,34 @@ export default function Cart() {
 
   useEffect(() => {
     if (mapRef.current && !mapInstanceRef.current) {
-      const map = L.map(mapRef.current).setView([36.8065, 10.1815], 13);
+      const defaultLat = 36.8065, defaultLng = 10.1815;
+      const map = L.map(mapRef.current).setView([defaultLat, defaultLng], 13);
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "&copy; OpenStreetMap contributors",
       }).addTo(map);
       mapInstanceRef.current = map;
+
+      // try auto-detect position
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const { latitude, longitude } = pos.coords;
+            setLatitude(latitude);
+            setLongitude(longitude);
+            map.setView([latitude, longitude], 15);
+            markerRef.current = L.marker([latitude, longitude]).addTo(map);
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+              .then((r) => r.json())
+              .then((data) => { if (data.display_name) setAddress(data.display_name); })
+              .catch(() => {});
+          },
+          () => {
+            // fallback: let user click on map
+            map.setView([defaultLat, defaultLng], 13);
+          },
+          { enableHighAccuracy: true, timeout: 8000 }
+        );
+      }
 
       map.on("click", (e) => {
         const { lat, lng } = e.latlng;
@@ -41,12 +64,9 @@ export default function Cart() {
         setLongitude(lng);
         if (markerRef.current) markerRef.current.setLatLng([lat, lng]);
         else markerRef.current = L.marker([lat, lng]).addTo(map);
-        // reverse geocode
         fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
           .then((r) => r.json())
-          .then((data) => {
-            if (data.display_name) setAddress(data.display_name);
-          })
+          .then((data) => { if (data.display_name) setAddress(data.display_name); })
           .catch(() => {});
       });
     }
