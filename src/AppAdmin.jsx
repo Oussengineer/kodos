@@ -4,11 +4,13 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import AdminOrders from "./pages/admin/Orders";
 import AdminProducts from "./pages/admin/Products";
 import AdminProductForm from "./pages/admin/ProductForm";
+import AdminLogin from "./pages/admin/AdminLogin";
 
 export default function AppAdmin() {
   return (
     <BrowserRouter basename="/admin">
       <Routes>
+        <Route path="/login" element={<AdminLogin />} />
         <Route element={<AdminLayout />}>
           <Route path="/" element={<AdminDashboard />} />
           <Route path="/orders" element={<AdminOrders />} />
