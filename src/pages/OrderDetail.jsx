@@ -99,10 +99,10 @@ export default function OrderDetail() {
         ))}
       </div>
 
-      {/* driver tracking map */}
-      {["out_for_delivery", "delivered"].includes(order.status) && (
+      {/* driver tracking map - only when a driver is assigned */}
+      {order.driverId && ["out_for_delivery", "delivered"].includes(order.status) && (
         <div className="order-section">
-          <h3>{driverPos ? "Driver Location" : "Waiting for driver location..."}</h3>
+          <h3>{driverPos ? "Driver Location" : "Driver is on the way..."}</h3>
           <div ref={mapRef} style={{ height: 220, borderRadius: 8, zIndex: 1 }} />
         </div>
       )}

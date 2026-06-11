@@ -35,7 +35,7 @@ router.get("/orders/available", driverAuth, async (_req, res) => {
     const orders = await getJSON(ORDERS_PATH);
     const users = await getJSON(USERS_PATH);
     const available = orders.filter(
-      (o) => o.status === "preparing" || o.status === "out_for_delivery"
+      (o) => !o.driverId && (o.status === "preparing" || o.status === "out_for_delivery")
     );
     const enriched = available.map((o) => {
       const u = users.find((user) => user.id === o.userId);
