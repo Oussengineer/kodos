@@ -1,4 +1,4 @@
 [
   { "id": 1, "name": "Admin", "email": "admin@kodos.com", "password": "admin123", "role": "admin" },
-  { "id": 2, "name": "Driver", "email": "driver@kodos.com", "password": "driver123", "role": "driver" }
+  { "id": 2, "name": "Driver", "email": "driver@kodos.com", "password": "driver123", "phone": "+216 50 123 456", "role": "driver" }
 ]

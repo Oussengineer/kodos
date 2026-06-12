@@ -3,6 +3,7 @@ import { readFile, writeFile } from "node:fs/promises";
 
 const router = Router();
 const ORDERS_PATH = new URL("../data/orders.json", import.meta.url);
+const USERS_PATH = new URL("../data/users.json", import.meta.url);
 
 async function getOrders() {
   try {
@@ -60,6 +61,14 @@ router.get("/:id", auth, async (req, res) => {
     const orders = await getOrders();
     const order = orders.find((o) => o.id === Number(req.params.id) && o.userId === req.userId);
     if (!order) return res.status(404).json({ error: "Order not found" });
+    if (order.driverId) {
+      const users = JSON.parse(await readFile(USERS_PATH, "utf-8"));
+      const driver = users.find((u) => u.id === order.driverId);
+      if (driver) {
+        order.driverName = driver.name;
+        order.driverPhone = driver.phone || "";
+      }
+    }
     res.json(order);
   } catch (err) {
     res.status(500).json({ error: err.message });
