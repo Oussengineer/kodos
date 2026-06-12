@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Cart from "./pages/Cart";
@@ -10,10 +10,12 @@ import RestaurantDetail from "./pages/RestaurantDetail";
 import Grocery from "./pages/Grocery";
 import SplashScreen from "./components/SplashScreen";
 
+const basename = window.Capacitor ? "" : "/customer";
+
 export default function AppCustomer() {
   return (
     <SplashScreen>
-      <BrowserRouter basename="/customer">
+      <BrowserRouter basename={basename}>
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
@@ -24,6 +26,7 @@ export default function AppCustomer() {
             <Route path="/orders/:id" element={<OrderDetail />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/login" element={<Login />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>
       </BrowserRouter>

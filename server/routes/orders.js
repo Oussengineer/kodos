@@ -4,6 +4,19 @@ import { readFile, writeFile } from "node:fs/promises";
 const router = Router();
 const ORDERS_PATH = new URL("../data/orders.json", import.meta.url);
 const USERS_PATH = new URL("../data/users.json", import.meta.url);
+const RESTAURANTS_PATH = new URL("../data/restaurants.json", import.meta.url);
+
+function haversineKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
 async function getOrders() {
   try {
@@ -27,12 +40,29 @@ router.post("/", auth, async (req, res) => {
   try {
     const orders = await getOrders();
     const { items, address, total, latitude, longitude } = req.body;
+
+    let deliveryFee = 0;
+    if (items && items.length > 0 && latitude != null && longitude != null) {
+      const restaurants = JSON.parse(await readFile(RESTAURANTS_PATH, "utf-8"));
+      const restaurantId = items[0].restaurantId;
+      const restaurant = restaurants.find((r) => r.id === restaurantId);
+      if (restaurant && restaurant.latitude != null && restaurant.longitude != null) {
+        const dist = haversineKm(
+          latitude, longitude,
+          restaurant.latitude, restaurant.longitude
+        );
+        deliveryFee = Math.round(dist * 300);
+      }
+    }
+
+    const finalTotal = total + deliveryFee;
     const order = {
       id: Date.now(),
       userId: req.userId,
       items,
       address,
-      total,
+      total: finalTotal,
+      deliveryFee,
       latitude: latitude || null,
       longitude: longitude || null,
       status: "pending",

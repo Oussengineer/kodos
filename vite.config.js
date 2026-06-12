@@ -48,7 +48,11 @@ export default defineConfig(({ mode }) => {
       react(),
       VitePWA({
         registerType: "autoUpdate",
-        includeAssets: ["favicon.svg"],
+        includeAssets: ["favicon.png"],
+        workbox: {
+          navigateFallback: `/${app.input.replace(/\.html$/, "")}.html`,
+          globPatterns: ["**/*.{js,css,html,png,json,webmanifest}"],
+        },
         manifest: {
           name: app.pwa.name,
           short_name: app.pwa.short_name,
@@ -60,14 +64,14 @@ export default defineConfig(({ mode }) => {
           start_url: app.pwa.start_url,
           icons: [
             {
-              src: "/icons/icon-192.svg",
+              src: "/icons/icon-192.png",
               sizes: "192x192",
-              type: "image/svg+xml",
+              type: "image/png",
             },
             {
-              src: "/icons/icon-512.svg",
+              src: "/icons/icon-512.png",
               sizes: "512x512",
-              type: "image/svg+xml",
+              type: "image/png",
             },
           ],
         },

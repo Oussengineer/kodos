@@ -3,8 +3,21 @@ import { useNavigate } from "react-router-dom";
 import { useCartStore } from "../store/useCartStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { placeOrder } from "../api/orders";
+import { getRestaurants } from "../api/restaurants";
 import CartItem from "../components/CartItem";
 import L from "leaflet";
+
+function haversineKm(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
 // Fix default marker icon for Webpack/Vite
 delete L.Icon.Default.prototype._getIconUrl;
@@ -23,9 +36,27 @@ export default function Cart() {
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   const [placing, setPlacing] = useState(false);
+  const [restaurants, setRestaurants] = useState([]);
+  const [deliveryFee, setDeliveryFee] = useState(null);
   const mapRef = useRef(null);
   const markerRef = useRef(null);
   const mapInstanceRef = useRef(null);
+
+  useEffect(() => {
+    getRestaurants().then(setRestaurants).catch(() => {});
+  }, []);
+
+  const restaurantId = items.length > 0 ? items[0].restaurantId : null;
+  const restaurant = restaurants.find((r) => r.id === restaurantId);
+
+  useEffect(() => {
+    if (latitude != null && longitude != null && restaurant?.latitude != null) {
+      const dist = haversineKm(latitude, longitude, restaurant.latitude, restaurant.longitude);
+      setDeliveryFee(Math.round(dist * 300));
+    } else {
+      setDeliveryFee(null);
+    }
+  }, [latitude, longitude, restaurant]);
 
   useEffect(() => {
     if (mapRef.current && !mapInstanceRef.current) {
@@ -101,6 +132,8 @@ export default function Cart() {
     );
   }
 
+  const finalTotal = getTotal() + (deliveryFee ?? 0);
+
   return (
     <div className="page cart">
       <h1>Your Cart</h1>
@@ -111,8 +144,18 @@ export default function Cart() {
       </div>
       <div className="cart-summary">
         <div className="cart-total">
-          <span>Total</span>
+          <span>Subtotal</span>
           <span>${getTotal().toFixed(2)}</span>
+        </div>
+        {deliveryFee != null && (
+          <div className="cart-total" style={{ fontSize: ".85rem", color: "var(--text-muted)" }}>
+            <span>Delivery fee</span>
+            <span>${deliveryFee.toFixed(2)}</span>
+          </div>
+        )}
+        <div className="cart-total" style={{ borderTop: "1px solid var(--border)", paddingTop: 8 }}>
+          <span>Total</span>
+          <span>${finalTotal.toFixed(2)}</span>
         </div>
         <p style={{ fontSize: ".85rem", color: "var(--text-muted)", marginBottom: 8 }}>
           Click on the map to choose your delivery location

@@ -21,6 +21,7 @@ export default function AdminRestaurants() {
         <Link to="/" className="back-link">← Dashboard</Link>
         <div className="admin-header-row">
           <h1>Vendors</h1>
+          <Link to="/restaurants/new" className="btn-primary btn-sm">Add</Link>
         </div>
       </div>
 
@@ -33,15 +34,20 @@ export default function AdminRestaurants() {
               background: "var(--surface)", borderRadius: "var(--radius)",
               boxShadow: "var(--shadow)", padding: 12, marginBottom: 8,
             }}>
-              <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+              <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
                 <img src={r.image} alt={r.name} style={{ width: 48, height: 48, borderRadius: 6, objectFit: "cover" }} />
-                <div style={{ flex: 1 }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
                   <h4 style={{ fontSize: ".9rem" }}>{r.name}</h4>
-                  <p style={{ fontSize: ".75rem", color: "var(--text-muted)" }}>
-                    {r.type} · ★ {r.rating} · {r.deliveryTime} · ${r.deliveryFee.toFixed(2)}
+                  <p style={{ fontSize: ".75rem", color: "var(--text-muted)", lineHeight: 1.5 }}>
+                    {r.type} · ★ {r.rating} · {r.deliveryTime}
+                    {r.latitude != null && ` · 📍 ${r.latitude}, ${r.longitude}`}
                   </p>
+                  {r.phone && <p style={{ fontSize: ".75rem", color: "var(--text-muted)" }}>📞 {r.phone}</p>}
+                  {r.address && <p style={{ fontSize: ".75rem", color: "var(--text-muted)" }}>📍 {r.address}</p>}
+                  {r.openingHours && <p style={{ fontSize: ".75rem", color: "var(--text-muted)" }}>🕐 {r.openingHours}</p>}
                 </div>
-                <button className="btn-secondary btn-xs btn-danger" onClick={() => handleDelete(r.id)}>Del</button>
+                <Link to={`/restaurants/edit/${r.id}`} className="btn-secondary btn-xs" style={{ marginRight: 4, flexShrink: 0 }}>Edit</Link>
+                <button className="btn-secondary btn-xs btn-danger" style={{ flexShrink: 0 }} onClick={() => handleDelete(r.id)}>Del</button>
               </div>
             </div>
           ))}

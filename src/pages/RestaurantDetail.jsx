@@ -30,8 +30,11 @@ export default function RestaurantDetail() {
           <div style={{ display: "flex", gap: 8, fontSize: ".75rem", color: "var(--text-muted)", marginTop: 4 }}>
             <span>★ {restaurant.rating}</span>
             <span>🕐 {restaurant.deliveryTime}</span>
-            <span>🚚 ${restaurant.deliveryFee.toFixed(2)}</span>
+            <span>🚚 Fee at checkout</span>
           </div>
+          {restaurant.phone && <p style={{ fontSize: ".75rem", color: "var(--text-muted)", marginTop: 4 }}>📞 {restaurant.phone}</p>}
+          {restaurant.address && <p style={{ fontSize: ".75rem", color: "var(--text-muted)" }}>📍 {restaurant.address}</p>}
+          {restaurant.openingHours && <p style={{ fontSize: ".75rem", color: "var(--text-muted)" }}>🕐 {restaurant.openingHours}</p>}
         </div>
       </div>
       <div className="products-grid">

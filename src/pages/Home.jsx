@@ -63,7 +63,7 @@ export default function Home() {
                 <p style={{ fontSize: ".8rem", color: "var(--text-muted)", margin: "4px 0" }}>{r.description}</p>
                 <div style={{ display: "flex", gap: 8, fontSize: ".75rem", color: "var(--text-muted)" }}>
                   <span>🕐 {r.deliveryTime}</span>
-                  <span>🚚 ${r.deliveryFee.toFixed(2)}</span>
+                  <span>🚚 Fee at checkout</span>
                 </div>
               </div>
             </Link>

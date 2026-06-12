@@ -2,17 +2,23 @@ import { useState, useEffect, useRef } from "react";
 
 const SPLASH_KEY = "kodos_splash_shown";
 
+function getSplashState() {
+  try {
+    return sessionStorage.getItem(SPLASH_KEY) ? "done" : "splash";
+  } catch {
+    return "splash";
+  }
+}
+
 export default function SplashScreen({ children }) {
-  const [phase, setPhase] = useState(() =>
-    sessionStorage.getItem(SPLASH_KEY) ? "done" : "splash"
-  );
+  const [phase, setPhase] = useState(getSplashState);
   const [fade, setFade] = useState(false);
   const videoRef = useRef(null);
 
   const finish = () => {
     setFade(true);
     setTimeout(() => {
-      sessionStorage.setItem(SPLASH_KEY, "1");
+      try { sessionStorage.setItem(SPLASH_KEY, "1"); } catch {}
       setPhase("done");
     }, 500);
   };

@@ -28,8 +28,11 @@ export default function Grocery() {
             <p style={{ fontSize: ".8rem", color: "var(--text-muted)" }}>{store.description}</p>
             <div style={{ display: "flex", gap: 8, fontSize: ".75rem", color: "var(--text-muted)", marginTop: 4 }}>
               <span>🕐 {store.deliveryTime}</span>
-              <span>🚚 ${store.deliveryFee.toFixed(2)}</span>
+              <span>🚚 Fee at checkout</span>
             </div>
+            {store.phone && <p style={{ fontSize: ".75rem", color: "var(--text-muted)", marginTop: 4 }}>📞 {store.phone}</p>}
+            {store.address && <p style={{ fontSize: ".75rem", color: "var(--text-muted)" }}>📍 {store.address}</p>}
+            {store.openingHours && <p style={{ fontSize: ".75rem", color: "var(--text-muted)" }}>🕐 {store.openingHours}</p>}
           </div>
         </div>
       )}

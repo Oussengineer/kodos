@@ -6,8 +6,12 @@
     "description": "Authentic Italian pizzas baked in wood-fired oven",
     "type": "restaurant",
     "deliveryTime": "25-35 min",
-    "deliveryFee": 2.99,
-    "rating": 4.6
+    "rating": 4.6,
+    "latitude": 36.8065,
+    "longitude": 10.1815,
+    "phone": "+216 71 123 456",
+    "address": "15 Rue de la Liberté, Tunis",
+    "openingHours": "Mon-Sun: 11:00-23:00"
   },
   {
     "id": 2,
@@ -16,8 +20,12 @@
     "description": "Juicy burgers made with premium angus beef",
     "type": "restaurant",
     "deliveryTime": "15-25 min",
-    "deliveryFee": 1.99,
-    "rating": 4.4
+    "rating": 4.4,
+    "latitude": 36.7990,
+    "longitude": 10.1900,
+    "phone": "+216 71 234 567",
+    "address": "42 Avenue Habib Bourguiba, Tunis",
+    "openingHours": "Mon-Sun: 10:00-00:00"
   },
   {
     "id": 3,
@@ -26,8 +34,12 @@
     "description": "Fresh sushi and Japanese delicacies",
     "type": "restaurant",
     "deliveryTime": "20-30 min",
-    "deliveryFee": 3.49,
-    "rating": 4.8
+    "rating": 4.8,
+    "latitude": 36.8120,
+    "longitude": 10.1700,
+    "phone": "+216 71 345 678",
+    "address": "8 Rue des Jardins, Tunis",
+    "openingHours": "Mon-Sat: 12:00-22:30, Sun: 13:00-21:00"
   },
   {
     "id": 4,
@@ -36,8 +48,12 @@
     "description": "Healthy salads, noodles and wholesome meals",
     "type": "restaurant",
     "deliveryTime": "15-25 min",
-    "deliveryFee": 1.49,
-    "rating": 4.3
+    "rating": 4.3,
+    "latitude": 36.8010,
+    "longitude": 10.1950,
+    "phone": "+216 71 456 789",
+    "address": "25 Rue Mohamed V, Tunis",
+    "openingHours": "Mon-Fri: 08:00-21:00, Sat-Sun: 09:00-18:00"
   },
   {
     "id": 5,
@@ -46,8 +62,12 @@
     "description": "Desserts, drinks and sweet treats",
     "type": "restaurant",
     "deliveryTime": "10-20 min",
-    "deliveryFee": 0.99,
-    "rating": 4.7
+    "rating": 4.7,
+    "latitude": 36.8100,
+    "longitude": 10.1650,
+    "phone": "+216 71 567 890",
+    "address": "3 Rue de Paris, Tunis",
+    "openingHours": "Mon-Sun: 09:00-23:00"
   },
   {
     "id": 6,
@@ -56,7 +76,11 @@
     "description": "Everyday groceries delivered to your door",
     "type": "grocery",
     "deliveryTime": "20-40 min",
-    "deliveryFee": 1.99,
-    "rating": 4.2
+    "rating": 4.2,
+    "latitude": 36.7980,
+    "longitude": 10.1850,
+    "phone": "+216 71 678 901",
+    "address": "50 Avenue de Carthage, Tunis",
+    "openingHours": "Mon-Sun: 07:00-22:00"
   }
 ]

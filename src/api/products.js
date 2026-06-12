@@ -8,3 +8,6 @@ export const getCategories = () =>
 
 export const getProduct = (id) =>
   client.get(`/products/${id}`).then((r) => r.data);
+
+export const getProductReviews = (id) =>
+  client.get(`/products/${id}/reviews`).then((r) => r.data);
