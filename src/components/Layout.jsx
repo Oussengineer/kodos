@@ -16,6 +16,16 @@ export default function Layout() {
 
   return (
     <div className="app-layout">
+      <header className="app-header">
+        <span className="app-logo">Kodos</span>
+        <a
+          className="download-apk-btn"
+          href="https://kodos.onrender.com/apk/kodos-customer.apk"
+          download
+        >
+          📱 Download APK
+        </a>
+      </header>
       <main className="main-content">
         <Outlet />
       </main>
