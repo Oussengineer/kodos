@@ -1,22 +1,23 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { getAllOrders, updateOrderStatus } from "../../api/admin";
 import { requestNotifyPermission, sendNotification } from "../../utils/notify";
 
 const STATUS_FLOW = ["pending", "confirmed", "preparing", "out_for_delivery", "delivered"];
 
-const ADMIN_ACTIONS = {
-  pending: { next: "confirmed", label: "Confirm Order", color: "#2ecc71" },
-  confirmed: { next: "preparing", label: "Mark Preparing", color: "#3498db" },
-  preparing: null,
-  out_for_delivery: null,
-  delivered: null,
-  cancelled: null,
-};
-
 export default function AdminOrders() {
+  const { t } = useTranslation();
   const [orders, setOrders] = useState([]);
   const [updating, setUpdating] = useState(null);
+  const ADMIN_ACTIONS = {
+    pending: { next: "confirmed", label: t("admin.orders.confirmOrder"), color: "#2ecc71" },
+    confirmed: { next: "preparing", label: t("admin.orders.markPreparing"), color: "#3498db" },
+    preparing: null,
+    out_for_delivery: null,
+    delivered: null,
+    cancelled: null,
+  };
   const seenIds = useRef(new Set());
 
   const fetchOrders = useCallback(async () => {
@@ -25,7 +26,7 @@ export default function AdminOrders() {
       for (const o of data) {
         if (!seenIds.current.has(o.id)) {
           seenIds.current.add(o.id);
-          sendNotification("New Order!", `Order #${o.id} — ${o.customerName} — ${o.total.toFixed(2)} TND`);
+          sendNotification(t("admin.orders.newOrder"), `Order #${o.id} — ${o.customerName} — ${o.total.toFixed(2)} ${t("common.currency")}`);
         }
       }
       setOrders(data);
@@ -53,12 +54,12 @@ export default function AdminOrders() {
   return (
     <div className="page admin-page">
       <div className="admin-header">
-        <Link to="/" className="back-link">← Dashboard</Link>
-        <h1>All Orders</h1>
+        <Link to="/" className="back-link">{t("admin.orders.backDashboard")}</Link>
+        <h1>{t("admin.orders.title")}</h1>
       </div>
 
       {orders.length === 0 ? (
-        <div className="empty-state"><p>No orders yet</p></div>
+        <div className="empty-state"><p>{t("admin.orders.noOrders")}</p></div>
       ) : (
         <div className="orders-list">
           {orders.map((order) => {
@@ -70,10 +71,10 @@ export default function AdminOrders() {
                   <span className="order-date">{new Date(order.createdAt).toLocaleDateString()}</span>
                 </div>
                 <div className="admin-order-body">
-                  <p><strong>Customer:</strong> {order.customerName}</p>
-                  <p><strong>Address:</strong> {order.address}</p>
-                  <p><strong>Items:</strong> {order.items.map((i) => i.name).join(", ")}</p>
-                  <p><strong>Total:</strong> {order.total.toFixed(2)} TND</p>
+                  <p><strong>{t("admin.orders.customer")}</strong> {order.customerName}</p>
+                  <p><strong>{t("admin.orders.address")}</strong> {order.address}</p>
+                  <p><strong>{t("admin.orders.items")}</strong> {order.items.map((i) => i.name).join(", ")}</p>
+                  <p><strong>{t("admin.orders.total")}</strong> {order.total.toFixed(2)} {t("common.currency")}</p>
                 </div>
                 <div className="admin-order-actions">
                   {action && (
@@ -83,7 +84,7 @@ export default function AdminOrders() {
                       onClick={() => handleStatus(order.id, action.next)}
                       disabled={updating === order.id}
                     >
-                      {updating === order.id ? "Updating..." : action.label}
+                      {updating === order.id ? t("admin.orders.updating") : action.label}
                     </button>
                   )}
                   {order.status !== "cancelled" && order.status !== "delivered" && order.status !== "preparing" && (
@@ -93,7 +94,7 @@ export default function AdminOrders() {
                       onClick={() => handleStatus(order.id, "cancelled")}
                       disabled={updating === order.id}
                     >
-                      Cancel
+                      {t("admin.orders.cancel")}
                     </button>
                   )}
                 </div>

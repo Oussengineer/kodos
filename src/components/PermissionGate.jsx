@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { requestNotifyPermission } from "../utils/notify";
 
 const PERM_KEY = "kodos_permissions_granted";
@@ -12,6 +13,7 @@ function getPermissionState() {
 }
 
 export default function PermissionGate({ children }) {
+  const { t } = useTranslation();
   const [done, setDone] = useState(getPermissionState);
   const [step, setStep] = useState("idle");
 
@@ -44,11 +46,10 @@ export default function PermissionGate({ children }) {
         }}
       >
         <h2 style={{ margin: "0 0 12px", fontSize: 24, color: "#111" }}>
-          Allow Permissions
+          {t("PermissionGate.allow")}
         </h2>
         <p style={{ margin: "0 0 24px", fontSize: 15, color: "#555", lineHeight: 1.5, maxWidth: 300 }}>
-          We need your permission to send you notifications
-          about your order status and updates.
+          {t("PermissionGate.description")}
         </p>
         <button
           onClick={handleContinue}
@@ -59,7 +60,7 @@ export default function PermissionGate({ children }) {
             padding: "14px 48px", fontSize: 16, cursor: "pointer",
           }}
         >
-          {step === "requesting" ? "Please allow..." : "Continue"}
+          {step === "requesting" ? t("PermissionGate.pleaseAllow") : t("PermissionGate.continue")}
         </button>
       </div>
       {children}

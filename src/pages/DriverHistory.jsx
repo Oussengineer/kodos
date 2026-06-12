@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { getDeliveryHistory } from "../api/driver";
 
 export default function DriverHistory() {
+  const { t } = useTranslation();
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -15,7 +17,7 @@ export default function DriverHistory() {
   if (loading) {
     return (
       <div className="page">
-        <div className="empty-state"><p>Loading history...</p></div>
+        <div className="empty-state"><p>{t("driver.history.loading")}</p></div>
       </div>
     );
   }
@@ -23,9 +25,9 @@ export default function DriverHistory() {
   if (history.length === 0) {
     return (
       <div className="page">
-        <h2>Delivery History</h2>
+        <h2>{t("driver.history.title")}</h2>
         <div className="empty-state">
-          <p>No deliveries completed yet</p>
+          <p>{t("driver.history.noDeliveries")}</p>
         </div>
       </div>
     );
@@ -33,8 +35,8 @@ export default function DriverHistory() {
 
   return (
     <div className="page driver-history">
-      <h2>Delivery History</h2>
-      <p className="subtitle">{history.length} deliveries completed</p>
+      <h2>{t("driver.history.title")}</h2>
+      <p className="subtitle">{t("driver.history.completed", { count: history.length })}</p>
 
       <div className="driver-orders-list">
         {history.map((order) => (
@@ -42,7 +44,7 @@ export default function DriverHistory() {
             <div className="driver-order-top">
               <span className="driver-customer">{order.customerName}</span>
               <span className="driver-status-badge" style={{ background: "#d4edda", color: "#155724" }}>
-                ✓ Delivered
+                {t("driver.history.delivered")}
               </span>
             </div>
             <p className="driver-order-items">
@@ -53,7 +55,7 @@ export default function DriverHistory() {
               <span className="driver-order-total">{order.total.toFixed(2)} TND</span>
             </div>
             <p className="driver-delivered-at">
-              Delivered {new Date(order.deliveredAt).toLocaleString()}
+              {t("driver.history.deliveredOn", { date: new Date(order.deliveredAt).toLocaleString() })}
             </p>
           </div>
         ))}

@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getRestaurants } from "../api/restaurants";
+import { useTranslation } from "react-i18next";
 
 export default function Home() {
+  const { t } = useTranslation();
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -22,8 +24,8 @@ export default function Home() {
   return (
     <div className="page home">
       <header className="page-header">
-        <h1>Kodos</h1>
-        <p className="subtitle">Fresh food, delivered fast</p>
+        <h1>{t("home.title")}</h1>
+        <p className="subtitle">{t("home.subtitle")}</p>
       </header>
 
       <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
@@ -38,7 +40,7 @@ export default function Home() {
       </div>
 
       {loading ? (
-        <div className="empty-state"><p>Loading...</p></div>
+        <div className="empty-state"><p>{t("home.loading")}</p></div>
       ) : error ? (
         <div className="empty-state"><p style={{ color: "var(--danger)" }}>{error}</p></div>
       ) : filtered.length === 0 ? (

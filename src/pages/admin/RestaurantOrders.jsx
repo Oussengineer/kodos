@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { getRestaurantOrders, updateRestaurantOrderStatus } from "../../api/admin";
 import { requestNotifyPermission, sendNotification } from "../../utils/notify";
 
 const STATUS_FLOW = ["pending", "confirmed", "preparing"];
 
 export default function RestaurantOrders() {
+  const { t } = useTranslation();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const seenIds = useRef(new Set());
@@ -15,7 +17,7 @@ export default function RestaurantOrders() {
         for (const o of data) {
           if (!seenIds.current.has(o.id)) {
             seenIds.current.add(o.id);
-            sendNotification("New Order!", `Order #${o.id} — ${o.customerName} — ${o.total.toFixed(2)} TND`);
+            sendNotification(t("admin.restaurantOrders.newOrder"), `Order #${o.id} — ${o.customerName} — ${o.total.toFixed(2)} ${t("common.currency")}`);
           }
         }
         setOrders(data);
@@ -48,7 +50,7 @@ export default function RestaurantOrders() {
   if (loading) {
     return (
       <div className="page admin-page">
-        <div className="empty-state"><p>Loading orders...</p></div>
+        <div className="empty-state"><p>{t("admin.restaurantOrders.loading")}</p></div>
       </div>
     );
   }
@@ -56,10 +58,10 @@ export default function RestaurantOrders() {
   return (
     <div className="page admin-page">
       <div className="admin-header">
-        <h1>Orders</h1>
+        <h1>{t("admin.restaurantOrders.title")}</h1>
       </div>
       {orders.length === 0 ? (
-        <div className="empty-state"><p>No orders yet</p></div>
+        <div className="empty-state"><p>{t("admin.restaurantOrders.noOrders")}</p></div>
       ) : (
         <div className="orders-list">
           {orders.map((order) => (
@@ -72,26 +74,26 @@ export default function RestaurantOrders() {
                 <p><strong>Customer:</strong> {order.customerName}</p>
                 <p><strong>Address:</strong> {order.address}</p>
                 <p><strong>Items:</strong> {order.items.map((i) => i.name).join(", ")}</p>
-                <p><strong>Total:</strong> {order.total.toFixed(2)} TND</p>
+                <p><strong>Total:</strong> {order.total.toFixed(2)} {t("common.currency")}</p>
               </div>
               <div className="admin-order-actions">
                 {order.status === "pending" && (
                   <button className="btn-primary btn-sm" onClick={() => advanceStatus(order)}>
-                    Accept ✓
+                    {t("admin.restaurantOrders.accept")}
                   </button>
                 )}
                 {order.status === "confirmed" && (
                   <button className="btn-primary btn-sm" onClick={() => advanceStatus(order)}>
-                    Mark Preparing
+                    {t("admin.restaurantOrders.markPreparing")}
                   </button>
                 )}
                 {order.status !== "delivered" && order.status !== "cancelled" && order.status !== "preparing" && (
                   <button className="btn-secondary btn-sm btn-danger" onClick={() => cancelOrder(order)}>
-                    Cancel
+                    {t("admin.restaurantOrders.cancel")}
                   </button>
                 )}
                 {order.status === "preparing" && (
-                  <span className="order-status-label" style={{ color: "#3498db" }}>Awaiting driver pickup</span>
+                  <span className="order-status-label" style={{ color: "#3498db" }}>{t("admin.restaurantOrders.awaitingDriver")}</span>
                 )}
               </div>
             </div>

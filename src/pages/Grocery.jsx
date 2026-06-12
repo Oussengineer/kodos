@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import { getProducts } from "../api/products";
 import { getRestaurant, getRestaurants } from "../api/restaurants";
 import ProductCard from "../components/ProductCard";
+import { useTranslation } from "react-i18next";
 
 export default function Grocery() {
+  const { t } = useTranslation();
   const [products, setProducts] = useState([]);
   const [store, setStore] = useState(null);
   const [error, setError] = useState("");
@@ -14,21 +16,21 @@ export default function Grocery() {
     getProducts({ type: "grocery" }).then(setProducts).catch(() => {});
     getRestaurant(0).then((r) => {
       if (r && r.id) { setStore(r); return; }
-      throw new Error("Grocery store not found");
+      throw new Error(t("grocery.notFound"));
     }).catch((e) => {
       getRestaurants().then((restaurants) => {
         const grocery = restaurants.find((r) => r.type === "grocery");
         if (grocery) { setStore(grocery); }
-        else { setError("Grocery store not found"); }
-      }).catch(() => setError("Failed to load store"));
+        else { setError(t("grocery.notFound")); }
+      }).catch(() => setError(t("grocery.failedToLoad")));
     });
   }, []);
 
-  if (error) return <div className="page"><Link to="/" className="back-link">← Back</Link><div className="empty-state"><p style={{ color: "var(--danger)" }}>{error}</p></div></div>;
+  if (error) return <div className="page"><Link to="/" className="back-link">{t("grocery.back")}</Link><div className="empty-state"><p style={{ color: "var(--danger)" }}>{error}</p></div></div>;
 
   return (
     <div className="page">
-      <Link to="/" className="back-link">← Back</Link>
+      <Link to="/" className="back-link">{t("grocery.back")}</Link>
       {store && (
         <div style={{ display: "flex", gap: 12, marginBottom: 16, alignItems: "center" }}>
           <img src={store.image} alt={store.name} style={{ width: 64, height: 64, borderRadius: 8, objectFit: "cover" }} />

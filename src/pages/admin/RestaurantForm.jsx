@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { getAdminRestaurants, createRestaurant, updateRestaurant } from "../../api/admin";
 import L from "leaflet";
 
@@ -13,6 +14,7 @@ L.Icon.Default.mergeOptions({
 const DEFAULT_CENTER = [36.8065, 10.1815];
 
 export default function AdminRestaurantForm() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
@@ -84,7 +86,7 @@ export default function AdminRestaurantForm() {
     const lat = parseFloat(form.latitude);
     const lng = parseFloat(form.longitude);
     if (isNaN(lat) || isNaN(lng)) {
-      alert("Please select a location on the map or enter latitude/longitude.");
+      alert(t("admin.restaurantForm.selectLocation"));
       return;
     }
     const payload = {
@@ -104,61 +106,61 @@ export default function AdminRestaurantForm() {
   return (
     <div className="page admin-page">
       <div className="admin-header">
-        <Link to="/restaurants" className="back-link">← Vendors</Link>
-        <h1>{isEdit ? "Edit Vendor" : "Add Vendor"}</h1>
+        <Link to="/restaurants" className="back-link">{t("admin.restaurantForm.back")}</Link>
+        <h1>{isEdit ? t("admin.restaurantForm.editTitle") : t("admin.restaurantForm.addTitle")}</h1>
       </div>
 
       <form className="admin-form" onSubmit={handleSubmit}>
-        <label>Name</label>
+        <label>{t("admin.restaurantForm.name")}</label>
         <input value={form.name} onChange={update("name")} required />
 
-        <label>Image URL</label>
+        <label>{t("admin.restaurantForm.imageUrl")}</label>
         <input value={form.image} onChange={update("image")} placeholder="https://..." required />
 
-        <label>Description</label>
+        <label>{t("admin.restaurantForm.description")}</label>
         <textarea value={form.description} onChange={update("description")} required rows={3} />
 
-        <label>Type</label>
+        <label>{t("admin.restaurantForm.type")}</label>
         <select value={form.type} onChange={update("type")}>
-          <option value="restaurant">Restaurant</option>
-          <option value="grocery">Grocery</option>
+          <option value="restaurant">{t("admin.restaurantForm.type_restaurant")}</option>
+          <option value="grocery">{t("admin.restaurantForm.type_grocery")}</option>
         </select>
 
-        <label>Delivery Time</label>
-        <input value={form.deliveryTime} onChange={update("deliveryTime")} placeholder="e.g. 25-35 min" required />
+        <label>{t("admin.restaurantForm.deliveryTime")}</label>
+        <input value={form.deliveryTime} onChange={update("deliveryTime")} placeholder={t("admin.restaurantForm.deliveryPlaceholder")} required />
 
-        <label>Rating (0-5)</label>
+        <label>{t("admin.restaurantForm.rating")}</label>
         <input type="number" step="0.1" min="0" max="5" value={form.rating} onChange={update("rating")} />
 
         <hr style={{ margin: "16px 0", border: "none", borderTop: "1px solid var(--border)" }} />
-        <h3 style={{ marginBottom: 8, fontSize: "1rem" }}>Contact Information</h3>
+        <h3 style={{ marginBottom: 8, fontSize: "1rem" }}>{t("admin.restaurantForm.contactInfo")}</h3>
 
-        <label>Phone</label>
-        <input value={form.phone} onChange={update("phone")} placeholder="+216 XX XXX XXX" />
+        <label>{t("admin.restaurantForm.phone")}</label>
+        <input value={form.phone} onChange={update("phone")} placeholder={t("admin.restaurantForm.phonePlaceholder")} />
 
-        <label>Address</label>
-        <input value={form.address} onChange={update("address")} placeholder="Street, City" />
+        <label>{t("admin.restaurantForm.address")}</label>
+        <input value={form.address} onChange={update("address")} placeholder={t("admin.restaurantForm.addressPlaceholder")} />
 
-        <label>Opening Hours</label>
-        <input value={form.openingHours} onChange={update("openingHours")} placeholder="e.g. Mon-Sun: 09:00-22:00" />
+        <label>{t("admin.restaurantForm.openingHours")}</label>
+        <input value={form.openingHours} onChange={update("openingHours")} placeholder={t("admin.restaurantForm.hoursPlaceholder")} />
 
         <hr style={{ margin: "16px 0", border: "none", borderTop: "1px solid var(--border)" }} />
-        <h3 style={{ marginBottom: 8, fontSize: "1rem" }}>Location (click on map or enter coordinates)</h3>
+        <h3 style={{ marginBottom: 8, fontSize: "1rem" }}>{t("admin.restaurantForm.location")}</h3>
 
-        <label>Latitude</label>
-        <input type="number" step="any" value={form.latitude} onChange={update("latitude")} placeholder="e.g. 36.8065" required />
+        <label>{t("admin.restaurantForm.latitude")}</label>
+        <input type="number" step="any" value={form.latitude} onChange={update("latitude")} placeholder={t("admin.restaurantForm.latPlaceholder")} required />
 
-        <label>Longitude</label>
-        <input type="number" step="any" value={form.longitude} onChange={update("longitude")} placeholder="e.g. 10.1815" required />
+        <label>{t("admin.restaurantForm.longitude")}</label>
+        <input type="number" step="any" value={form.longitude} onChange={update("longitude")} placeholder={t("admin.restaurantForm.lngPlaceholder")} required />
 
         <div ref={mapRef} style={{ height: 280, borderRadius: 8, marginTop: 8, zIndex: 1 }} />
 
         <p style={{ fontSize: ".75rem", color: "var(--text-muted)", marginTop: 8 }}>
-          Click on the map to set position. Delivery fee = distance (km) × 1 TND.
+          {t("admin.restaurantForm.mapHelp")}
         </p>
 
         <button type="submit" className="btn-primary" style={{ marginTop: 16 }}>
-          {isEdit ? "Update Vendor" : "Create Vendor"}
+          {isEdit ? t("admin.restaurantForm.update") : t("admin.restaurantForm.create")}
         </button>
       </form>
     </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { postReview } from "../api/orders";
 import { useAuthStore } from "../store/useAuthStore";
+import { useTranslation } from "react-i18next";
 
 const REVIEWED_KEY = "kodos_reviewed_orders";
 
@@ -24,6 +25,7 @@ export function isUnreviewedDelivered(order) {
 }
 
 export default function ReviewPopup({ order, onClose }) {
+  const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
   const [ratings, setRatings] = useState({});
   const [comments, setComments] = useState({});
@@ -42,9 +44,9 @@ export default function ReviewPopup({ order, onClose }) {
         comment: comments[key] || "",
         userName: user?.name || "Customer",
       });
-      setMsg("Review submitted! ✓");
+      setMsg(t("review.success"));
     } catch {
-      setMsg("Failed to submit review");
+      setMsg(t("review.error"));
     }
     setSubmitting(false);
   };
@@ -59,9 +61,9 @@ export default function ReviewPopup({ order, onClose }) {
       <div className="modal-content review-popup" onClick={(e) => e.stopPropagation()}>
         <button className="modal-close" onClick={handleClose}>✕</button>
         <div className="modal-body">
-          <h2 className="modal-title" style={{ fontSize: "1.1rem" }}>Rate Your Order #{order.id}</h2>
+          <h2 className="modal-title" style={{ fontSize: "1.1rem" }}>{t("review.rateOrder", { id: order.id })}</h2>
           <p style={{ fontSize: ".85rem", color: "var(--text-muted)", marginBottom: 16 }}>
-            How was your food? Leave a review for each item.
+            {t("review.howWasFood")}
           </p>
 
           {msg && <p style={{ color: "var(--success)", marginBottom: 12, fontSize: ".9rem" }}>{msg}</p>}
@@ -72,7 +74,7 @@ export default function ReviewPopup({ order, onClose }) {
                 {item.image && <img src={item.image} alt={item.name} className="review-popup-img" />}
                 <div>
                   <p className="review-popup-name">{item.name} × {item.quantity}</p>
-                  <p className="review-popup-price">{(item.price * item.quantity).toFixed(2)} TND</p>
+                  <p className="review-popup-price">{(item.price * item.quantity).toFixed(2)} {t("review.price")}</p>
                 </div>
               </div>
 
@@ -90,7 +92,7 @@ export default function ReviewPopup({ order, onClose }) {
 
               <input
                 type="text"
-                placeholder="Add a comment (optional)"
+                placeholder={t("review.comment")}
                 value={comments[item.productId || item.id] || ""}
                 onChange={(e) => setComments((prev) => ({ ...prev, [item.productId || item.id]: e.target.value }))}
                 className="review-popup-input"
@@ -101,13 +103,13 @@ export default function ReviewPopup({ order, onClose }) {
                 onClick={() => handleSubmit(item.productId || item.id)}
                 disabled={!ratings[item.productId || item.id] || submitting}
               >
-                {ratings[item.productId || item.id] ? "Submit Review" : "Select a rating"}
+                {ratings[item.productId || item.id] ? t("review.submitReview") : t("review.selectRating")}
               </button>
             </div>
           ))}
 
           <button className="btn-secondary review-skip-btn" onClick={handleClose}>
-            {allReviewed ? "Done" : "Skip"}
+            {allReviewed ? t("review.done") : t("review.skip")}
           </button>
         </div>
       </div>

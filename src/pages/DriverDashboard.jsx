@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { getAvailableOrders, acceptOrder } from "../api/driver";
 import { useDriverStore } from "../store/useDriverStore";
 import { requestNotifyPermission, sendNotification } from "../utils/notify";
@@ -15,6 +16,7 @@ export default function DriverDashboard() {
   const [accepting, setAccepting] = useState(null);
   const setActiveDeliveries = useDriverStore((s) => s.setActiveDeliveries);
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const seenIds = useRef(new Set());
 
   const fetchOrders = useCallback(() => {
@@ -54,19 +56,19 @@ export default function DriverDashboard() {
   if (loading) {
     return (
       <div className="page">
-        <div className="empty-state"><p>Loading available orders...</p></div>
+        <div className="empty-state"><p>{t("driver.dashboard.loading")}</p></div>
       </div>
     );
   }
 
   return (
     <div className="page driver-dashboard">
-      <h2>Available Orders</h2>
-      <p className="subtitle">Orders ready for delivery</p>
+      <h2>{t("driver.dashboard.title")}</h2>
+      <p className="subtitle">{t("driver.dashboard.subtitle")}</p>
 
       {orders.length === 0 && (
         <div className="empty-state">
-          <p>No orders available right now</p>
+          <p>{t("driver.dashboard.noOrders")}</p>
         </div>
       )}
 
@@ -96,7 +98,7 @@ export default function DriverDashboard() {
                 onClick={() => handleAccept(order.id)}
                 disabled={accepting === order.id}
               >
-                {accepting === order.id ? "Accepting..." : "Accept Delivery"}
+                {accepting === order.id ? t("driver.dashboard.accepting") : t("driver.dashboard.accept")}
               </button>
             </div>
           );

@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useCartStore } from "../store/useCartStore";
 import { getProductReviews } from "../api/products";
 
 export default function ProductCard({ product }) {
+  const { t } = useTranslation();
   const addItem = useCartStore((s) => s.addItem);
   const rating = product.avgRating ?? product.rating ?? 0;
   const reviews = product.reviewCount || 0;
@@ -33,10 +35,10 @@ export default function ProductCard({ product }) {
           </div>
           <p className="product-desc">{product.description}</p>
           <div className="product-footer">
-            <span className="product-price">{product.price.toFixed(2)} TND</span>
+            <span className="product-price">{product.price.toFixed(2)} {t("common.currency")}</span>
             <span className="product-time">{product.prepTime} min</span>
             <button className="btn-add" onClick={(e) => { e.stopPropagation(); addItem(product); }}>
-              + Add
+              {t("productCard.add")}
             </button>
           </div>
         </div>
@@ -51,19 +53,19 @@ export default function ProductCard({ product }) {
               <h2 className="modal-title">{product.name}</h2>
               <div className="modal-meta">
                 <span className="modal-rating">★ {rating.toFixed(1)}</span>
-                <span className="modal-price">{product.price.toFixed(2)} TND</span>
+                <span className="modal-price">{product.price.toFixed(2)} {t("common.currency")}</span>
                 <span className="modal-time">{product.prepTime} min</span>
               </div>
               <p className="modal-desc">{product.description}</p>
 
               <h3 className="modal-reviews-header">
-                Reviews ({reviewsList.length})
+                {t("orderDetail.items")} ({reviewsList.length})
               </h3>
               <div className="modal-reviews">
                 {loadingReviews ? (
-                  <p className="modal-loading">Loading reviews...</p>
+                  <p className="modal-loading">{t("common.loading")}</p>
                 ) : reviewsList.length === 0 ? (
-                  <p className="modal-no-reviews">No reviews yet.</p>
+                  <p className="modal-no-reviews">{t("common.noResults")}</p>
                 ) : (
                   reviewsList.map((r) => (
                     <div key={r.id} className="review-item">

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { getActiveDeliveries, updateDeliveryStatus, updateDriverLocation } from "../api/driver";
 import { useDriverStore } from "../store/useDriverStore";
+import { useTranslation } from "react-i18next";
 import "../utils/leafletIcons";
 import L from "leaflet";
 
@@ -18,6 +19,7 @@ export default function DriverActiveDelivery() {
   const driverMarkerRef = useRef(null);
   const routeLineRef = useRef(null);
   const watchIdRef = useRef(null);
+  const { t } = useTranslation();
 
   const fetchActive = useCallback(async () => {
     try {
@@ -153,7 +155,7 @@ export default function DriverActiveDelivery() {
   if (loading) {
     return (
       <div className="page">
-        <div className="empty-state"><p>Loading active deliveries...</p></div>
+        <div className="empty-state"><p>{t("driver.activeDelivery.loading")}</p></div>
       </div>
     );
   }
@@ -161,10 +163,10 @@ export default function DriverActiveDelivery() {
   if (deliveries.length === 0) {
     return (
       <div className="page">
-        <h2>Active Deliveries</h2>
+        <h2>{t("driver.activeDelivery.title")}</h2>
         <div className="empty-state">
-          <p>No active deliveries</p>
-          <Link to="/" className="btn-primary">Find Orders</Link>
+          <p>{t("driver.activeDelivery.noDeliveries")}</p>
+          <Link to="/" className="btn-primary">{t("driver.activeDelivery.findOrders")}</Link>
         </div>
       </div>
     );
@@ -172,8 +174,8 @@ export default function DriverActiveDelivery() {
 
   return (
     <div className="page driver-active">
-      <h2>Active Deliveries</h2>
-      <p className="subtitle">{deliveries.length} delivery in progress</p>
+      <h2>{t("driver.activeDelivery.title")}</h2>
+      <p className="subtitle">{t("driver.activeDelivery.inProgress", { count: deliveries.length })}</p>
       {routeInfo && (
         <p style={{ fontSize: ".8rem", color: "var(--text-muted)", marginBottom: 8 }}>
           🗺️ {(routeInfo.distance / 1000).toFixed(1)} km · {Math.round(routeInfo.duration / 60)} min
@@ -194,7 +196,7 @@ export default function DriverActiveDelivery() {
             <div className="driver-order-top">
               <span className="driver-customer">{order.customerName}</span>
               <span className="driver-status-badge" style={{ background: "#cce5ff", color: "#004085" }}>
-                Out for Delivery
+                {t("driver.activeDelivery.outForDelivery")}
               </span>
             </div>
 
@@ -209,7 +211,7 @@ export default function DriverActiveDelivery() {
 
             {order.customerPhone && (
               <a href={`tel:${order.customerPhone}`} className="driver-call-btn">
-                📞 Call {order.customerName}
+                {t("driver.activeDelivery.call", { name: order.customerName })}
               </a>
             )}
 
@@ -219,7 +221,7 @@ export default function DriverActiveDelivery() {
               onClick={() => handleDelivered(order.id)}
               disabled={updating === order.id}
             >
-              {updating === order.id ? "Updating..." : "✓ Mark as Delivered"}
+              {updating === order.id ? t("driver.activeDelivery.updating") : t("driver.activeDelivery.markDelivered")}
             </button>
           </div>
         ))}

@@ -6,6 +6,7 @@ import { placeOrder } from "../api/orders";
 import { getRestaurants } from "../api/restaurants";
 import CartItem from "../components/CartItem";
 import "../utils/leafletIcons";
+import { useTranslation } from "react-i18next";
 
 function haversineKm(lat1, lng1, lat2, lng2) {
   const R = 6371;
@@ -20,6 +21,7 @@ function haversineKm(lat1, lng1, lat2, lng2) {
 }
 
 export default function Cart() {
+  const { t } = useTranslation();
   const { items, getTotal, clearCart } = useCartStore();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const name = useAuthStore((s) => s.user?.name || "");
@@ -97,14 +99,14 @@ export default function Cart() {
 
   const handleCheckout = async () => {
     if (!isAuthenticated) return navigate("/login");
-    if (!address.trim()) return alert("Please select a delivery location on the map");
+    if (!address.trim()) return alert(t("cart.enterAddress"));
     setPlacing(true);
     try {
       await placeOrder({ items, address, total: getTotal(), latitude, longitude });
       clearCart();
       navigate("/orders");
     } catch {
-      alert("Failed to place order. Is the server running?");
+      alert(t("cart.orderFailed"));
     } finally {
       setPlacing(false);
     }
@@ -113,11 +115,11 @@ export default function Cart() {
   if (items.length === 0) {
     return (
       <div className="page cart">
-        <h1>Cart</h1>
+        <h1>{t("cart.title")}</h1>
         <div className="empty-state">
-          <p>Your cart is empty</p>
+          <p>{t("cart.empty")}</p>
           <button className="btn-primary" onClick={() => navigate("/")}>
-            Browse Menu
+            {t("cart.browseMenu")}
           </button>
         </div>
       </div>
@@ -128,7 +130,7 @@ export default function Cart() {
 
   return (
     <div className="page cart">
-      <h1>Your Cart</h1>
+      <h1>{t("cart.yourCart")}</h1>
       <div className="cart-items">
         {items.map((item) => (
           <CartItem key={item.id} item={item} />
@@ -137,17 +139,17 @@ export default function Cart() {
       <div className="cart-summary">
         <div className="cart-total">
           <span>Subtotal</span>
-          <span>{getTotal().toFixed(2)} TND</span>
+          <span>{getTotal().toFixed(2)} {t("common.currency")}</span>
         </div>
         {deliveryFee != null && (
           <div className="cart-total" style={{ fontSize: ".85rem", color: "var(--text-muted)" }}>
             <span>Delivery fee</span>
-            <span>{deliveryFee.toFixed(2)} TND</span>
+            <span>{deliveryFee.toFixed(2)} {t("common.currency")}</span>
           </div>
         )}
         <div className="cart-total" style={{ borderTop: "1px solid var(--border)", paddingTop: 8 }}>
-          <span>Total</span>
-          <span>{finalTotal.toFixed(2)} TND</span>
+          <span>{t("cart.total")}</span>
+          <span>{finalTotal.toFixed(2)} {t("common.currency")}</span>
         </div>
         <p style={{ fontSize: ".85rem", color: "var(--text-muted)", marginBottom: 8 }}>
           Click on the map to choose your delivery location
@@ -155,13 +157,13 @@ export default function Cart() {
         <div ref={mapRef} style={{ height: 200, borderRadius: 8, marginBottom: 12, zIndex: 1 }} />
         <input
           type="text"
-          placeholder="Delivery address"
+          placeholder={t("cart.deliveryAddress")}
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           className="address-input"
         />
         <button className="btn-primary" onClick={handleCheckout} disabled={placing}>
-          {placing ? "Placing Order..." : "Place Order"}
+          {placing ? t("cart.placingOrder") : t("cart.placeOrder")}
         </button>
       </div>
     </div>

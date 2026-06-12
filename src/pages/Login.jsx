@@ -2,10 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login, register } from "../api/auth";
 import { useAuthStore } from "../store/useAuthStore";
+import { useTranslation } from "react-i18next";
 
 export default function Login() {
+  const { t } = useTranslation();
   const [isRegister, setIsRegister] = useState(false);
-  const [registeredEmail, setRegisteredEmail] = useState("");
   const [form, setForm] = useState({ name: "", email: "", password: "", phone: "" });
   const [error, setError] = useState("");
   const setAuth = useAuthStore((s) => s.setAuth);
@@ -15,49 +16,28 @@ export default function Login() {
     e.preventDefault();
     setError("");
     try {
-      if (isRegister) {
-        await register(form.name, form.email, form.password, form.phone);
-        setRegisteredEmail(form.email);
-        setForm({ name: "", email: "", password: "", phone: "" });
-      } else {
-        const data = await login(form.email, form.password);
-        setAuth(data.user, data.token);
-        navigate("/");
-      }
+      const data = isRegister
+        ? await register(form.name, form.email, form.password, form.phone)
+        : await login(form.email, form.password);
+      setAuth(data.user, data.token);
+      navigate("/");
     } catch (err) {
-      setError(err.response?.data?.error || "Something went wrong");
+      setError(err.response?.data?.error || t("common.error"));
     }
   };
 
   const update = (field) => (e) => setForm({ ...form, [field]: e.target.value });
 
-  if (registeredEmail) {
-    return (
-      <div className="page auth-page">
-        <div className="auth-card">
-          <h1>Check Your Email</h1>
-          <p style={{ textAlign: "center", lineHeight: 1.6, margin: "16px 0" }}>
-            We sent a verification link to <strong>{registeredEmail}</strong>.
-            Click the link to activate your account, then sign in.
-          </p>
-          <button className="btn-primary" onClick={() => setRegisteredEmail("")}>
-            Got it, sign in
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="page auth-page">
       <div className="auth-card">
-        <h1>{isRegister ? "Create Account" : "Sign In"}</h1>
+        <h1>{isRegister ? t("login.createAccount") : t("login.signIn")}</h1>
         {error && <p className="error-msg">{error}</p>}
         <form onSubmit={handleSubmit}>
           {isRegister && (
             <input
               type="text"
-              placeholder="Full Name"
+              placeholder={t("login.fullName")}
               value={form.name}
               onChange={update("name")}
               required
@@ -65,14 +45,14 @@ export default function Login() {
           )}
           <input
             type="email"
-            placeholder="Email"
+            placeholder={t("login.email")}
             value={form.email}
             onChange={update("email")}
             required
           />
           <input
             type="password"
-            placeholder="Password"
+            placeholder={t("login.password")}
             value={form.password}
             onChange={update("password")}
             required
@@ -81,23 +61,23 @@ export default function Login() {
           {isRegister && (
             <input
               type="tel"
-              placeholder="Phone (optional)"
+              placeholder={t("login.phone")}
               value={form.phone}
               onChange={update("phone")}
             />
           )}
           <button type="submit" className="btn-primary">
-            {isRegister ? "Register" : "Sign In"}
+            {isRegister ? t("login.register") : t("login.signIn")}
           </button>
         </form>
         <p className="auth-toggle">
-          {isRegister ? "Already have an account? " : "Don't have an account? "}
+          {isRegister ? t("login.alreadyHaveAccount") : t("login.dontHaveAccount")}
           <button className="link-btn" onClick={() => { setIsRegister(!isRegister); setError(""); }}>
-            {isRegister ? "Sign In" : "Register"}
+            {isRegister ? t("login.signInLink") : t("login.registerLink")}
           </button>
         </p>
         <p className="auth-toggle" style={{ marginTop: 8 }}>
-          <a href="/driver/login" className="link-btn">Are you a driver? Sign in here</a>
+          <a href="/driver/login" className="link-btn">{t("login.driverSignIn")}</a>
         </p>
       </div>
     </div>

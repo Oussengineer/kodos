@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { getAdminRestaurants, deleteRestaurant } from "../../api/admin";
 
 export default function AdminRestaurants() {
+  const { t } = useTranslation();
   const [restaurants, setRestaurants] = useState([]);
 
   useEffect(() => {
@@ -10,7 +12,7 @@ export default function AdminRestaurants() {
   }, []);
 
   const handleDelete = async (id) => {
-    if (!confirm("Delete this restaurant?")) return;
+    if (!confirm(t("admin.restaurants.deleteConfirm"))) return;
     await deleteRestaurant(id);
     setRestaurants((prev) => prev.filter((r) => r.id !== id));
   };
@@ -18,16 +20,16 @@ export default function AdminRestaurants() {
   return (
     <div className="page admin-page">
       <div className="admin-header">
-        <Link to="/" className="back-link">← Dashboard</Link>
+        <Link to="/" className="back-link">{t("admin.restaurants.backDashboard")}</Link>
         <div className="admin-header-row">
-          <h1>Vendors</h1>
-          <Link to="/restaurants/new" className="btn-primary btn-sm">Add</Link>
-          <Link to="/restaurants/account/new" className="btn-secondary btn-sm" style={{ marginLeft: 8 }}>+ Account</Link>
+          <h1>{t("admin.restaurants.title")}</h1>
+          <Link to="/restaurants/new" className="btn-primary btn-sm">{t("admin.restaurants.add")}</Link>
+          <Link to="/restaurants/account/new" className="btn-secondary btn-sm" style={{ marginLeft: 8 }}>{t("admin.restaurants.addAccount")}</Link>
         </div>
       </div>
 
       {restaurants.length === 0 ? (
-        <div className="empty-state"><p>No vendors yet</p></div>
+        <div className="empty-state"><p>{t("admin.restaurants.noVendors")}</p></div>
       ) : (
         <div className="admin-products-list">
           {restaurants.map((r) => (
@@ -47,8 +49,8 @@ export default function AdminRestaurants() {
                   {r.address && <p style={{ fontSize: ".75rem", color: "var(--text-muted)" }}>📍 {r.address}</p>}
                   {r.openingHours && <p style={{ fontSize: ".75rem", color: "var(--text-muted)" }}>🕐 {r.openingHours}</p>}
                 </div>
-                <Link to={`/restaurants/edit/${r.id}`} className="btn-secondary btn-xs" style={{ marginRight: 4, flexShrink: 0 }}>Edit</Link>
-                <button className="btn-secondary btn-xs btn-danger" style={{ flexShrink: 0 }} onClick={() => handleDelete(r.id)}>Del</button>
+                <Link to={`/restaurants/edit/${r.id}`} className="btn-secondary btn-xs" style={{ marginRight: 4, flexShrink: 0 }}>{t("admin.restaurants.edit")}</Link>
+                <button className="btn-secondary btn-xs btn-danger" style={{ flexShrink: 0 }} onClick={() => handleDelete(r.id)}>{t("admin.restaurants.del")}</button>
               </div>
             </div>
           ))}

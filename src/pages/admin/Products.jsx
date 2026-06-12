@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { getAdminProducts, deleteProduct, getAdminRestaurants } from "../../api/admin";
 import { useAuthStore } from "../../store/useAuthStore";
 
 export default function AdminProducts() {
+  const { t } = useTranslation();
   const [products, setProducts] = useState([]);
   const [restaurants, setRestaurants] = useState([]);
   const user = useAuthStore((s) => s.user);
@@ -17,7 +19,7 @@ export default function AdminProducts() {
   const vendorName = (id) => restaurants.find((r) => r.id === id)?.name || "Unknown";
 
   const handleDelete = async (id) => {
-    if (!confirm("Delete this product?")) return;
+    if (!confirm(t("admin.products.deleteConfirm"))) return;
     await deleteProduct(id);
     setProducts((prev) => prev.filter((p) => p.id !== id));
   };
@@ -25,15 +27,15 @@ export default function AdminProducts() {
   return (
     <div className="page admin-page">
       <div className="admin-header">
-        <Link to="/" className="back-link">← {isAdmin ? "Dashboard" : "Orders"}</Link>
+        <Link to="/" className="back-link">{t(isAdmin ? "admin.products.backDashboard" : "admin.products.backOrders")}</Link>
         <div className="admin-header-row">
-          <h1>Products</h1>
-          {isAdmin && <Link to="/products/new" className="btn-primary btn-sm">+ Add</Link>}
+          <h1>{t("admin.products.title")}</h1>
+          {isAdmin && <Link to="/products/new" className="btn-primary btn-sm">{t("admin.products.add")}</Link>}
         </div>
       </div>
 
       {products.length === 0 ? (
-        <div className="empty-state"><p>No products yet</p></div>
+        <div className="empty-state"><p>{t("admin.products.noProducts")}</p></div>
       ) : (
         <div className="admin-products-list">
           {products.map((p) => (
@@ -42,12 +44,12 @@ export default function AdminProducts() {
               <div className="admin-product-info">
                 <h4>{p.name}</h4>
                 <p className="admin-product-cat">{vendorName(p.restaurantId)} · {p.type} · {p.category}</p>
-                <span className="product-price">{p.price.toFixed(2)} TND</span>
+                <span className="product-price">{p.price.toFixed(2)} {t("common.currency")}</span>
               </div>
               {isAdmin && (
                 <div className="admin-product-actions">
-                  <Link to={`/products/edit/${p.id}`} className="btn-secondary btn-xs">Edit</Link>
-                  <button className="btn-secondary btn-xs btn-danger" onClick={() => handleDelete(p.id)}>Del</button>
+                  <Link to={`/products/edit/${p.id}`} className="btn-secondary btn-xs">{t("admin.products.edit")}</Link>
+                  <button className="btn-secondary btn-xs btn-danger" onClick={() => handleDelete(p.id)}>{t("admin.products.del")}</button>
                 </div>
               )}
             </div>

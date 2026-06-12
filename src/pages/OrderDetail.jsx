@@ -3,10 +3,12 @@ import { useParams, Link } from "react-router-dom";
 import { getOrder, getDriverLocation, postReview } from "../api/orders";
 import { useAuthStore } from "../store/useAuthStore";
 import "../utils/leafletIcons";
+import { useTranslation } from "react-i18next";
 
 const STATUS_FLOW = ["pending", "confirmed", "preparing", "out_for_delivery", "delivered"];
 
 export default function OrderDetail() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const [order, setOrder] = useState(null);
   const [driverPos, setDriverPos] = useState(null);
@@ -137,8 +139,8 @@ export default function OrderDetail() {
     return (
       <div className="page">
         <div className="empty-state">
-          <p>Loading order...</p>
-          <Link to="/orders" className="btn-primary">Back to Orders</Link>
+          <p>{t("orderDetail.loading")}</p>
+          <Link to="/orders" className="btn-primary">{t("orderDetail.backToOrders")}</Link>
         </div>
       </div>
     );
@@ -148,14 +150,14 @@ export default function OrderDetail() {
 
   return (
     <div className="page order-detail">
-      <Link to="/orders" className="back-link">← Back to Orders</Link>
-      <h1>Order #{order.id}</h1>
+      <Link to="/orders" className="back-link">{t("orderDetail.backToOrders")}</Link>
+      <h1>{t("orderDetail.title", { id: order.id })}</h1>
 
       <div className="status-tracker">
         {STATUS_FLOW.map((status, i) => (
           <div key={status} className={`status-step ${i <= currentStep ? "completed" : ""}`}>
             <div className="step-dot">{i <= currentStep ? "✓" : i + 1}</div>
-            <span className="step-label">{status.replace(/_/g, " ")}</span>
+            <span className="step-label">{t(`orderDetail.status_${status}`)}</span>
           </div>
         ))}
       </div>
@@ -181,21 +183,21 @@ export default function OrderDetail() {
       )}
 
       <div className="order-section">
-        <h3>Items</h3>
+        <h3>{t("orderDetail.items")}</h3>
         {order.items.map((item, i) => (
           <div key={i} className="order-item-row">
             <span>{item.name} × {item.quantity}</span>
-            <span>{(item.price * item.quantity).toFixed(2)} TND</span>
+            <span>{(item.price * item.quantity).toFixed(2)} {t("common.currency")}</span>
           </div>
         ))}
         <div className="order-item-row total">
-          <span>Total</span>
-          <span>{order.total.toFixed(2)} TND</span>
+          <span>{t("orderDetail.total")}</span>
+          <span>{order.total.toFixed(2)} {t("common.currency")}</span>
         </div>
       </div>
 
       <div className="order-section">
-        <h3>Delivery Address</h3>
+        <h3>{t("orderDetail.deliveryAddress")}</h3>
         <p>{order.address}</p>
         {order.latitude && order.longitude && (
           <p style={{ fontSize: ".75rem", color: "var(--text-muted)", marginTop: 4 }}>

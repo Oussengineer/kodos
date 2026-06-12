@@ -1,26 +1,30 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useCartStore } from "../store/useCartStore";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const isNative = typeof window !== "undefined" && window.Capacitor?.isNativePlatform();
 
 export default function Layout() {
+  const { t } = useTranslation();
   const location = useLocation();
   const itemCount = useCartStore((s) => s.getItemCount());
 
   const nav = [
-    { path: "/", label: "Menu", icon: "🍽️" },
-    { path: "/cart", label: "Cart", icon: "🛒", badge: itemCount },
-    { path: "/orders", label: "Orders", icon: "📋" },
-    { path: "/profile", label: "Profile", icon: "👤" },
+    { path: "/", label: t("nav.home"), icon: "🍽️" },
+    { path: "/cart", label: t("nav.cart"), icon: "🛒", badge: itemCount },
+    { path: "/orders", label: t("nav.orders"), icon: "📋" },
+    { path: "/profile", label: t("nav.profile"), icon: "👤" },
   ];
 
   return (
     <div className="app-layout">
       <header className="app-header">
         <span className="app-logo">Kodos</span>
-        {!isNative && <a className="download-apk-btn" href="/apk/customer.apk" download>
-          📱 Download APK
-        </a>}
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <LanguageSwitcher />
+          {!isNative && <a className="download-apk-btn" href="/apk/customer.apk" download>📱 Download APK</a>}
+        </div>
       </header>
       <main className="main-content">
         <Outlet />
