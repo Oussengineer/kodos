@@ -130,6 +130,8 @@
       .app-card h3 { font-size: 1.2rem; margin-bottom: 8px; }
       .app-card p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; flex: 1; }
       .app-card .btn { width: 100%; justify-content: center; }
+      .apk-link { display: block; margin-top: 8px; font-size: 0.8rem; color: var(--text-muted); text-decoration: none; }
+      .apk-link:hover { color: var(--primary); }
 
       /* Features */
       .features-grid {
@@ -285,18 +287,21 @@
           <h3>Customer App</h3>
           <p>Order your favorite food from local restaurants. Browse menus, track orders, and enjoy fast delivery.</p>
           <a href="/customer/" class="btn btn-primary">Order Food</a>
+          <a href="/apk/customer.apk" class="apk-link" download>📱 Download Android App</a>
         </div>
         <div class="app-card">
           <div class="app-icon merchant">🏪</div>
           <h3>Merchant App</h3>
           <p>Manage your restaurant, update menus, view orders, and grow your business with real-time analytics.</p>
           <a href="/admin/" class="btn btn-outline">Merchant Portal</a>
+          <a href="/apk/admin.apk" class="apk-link" download>📱 Download Android App</a>
         </div>
         <div class="app-card">
           <div class="app-icon delivery">🚚</div>
           <h3>Delivery App</h3>
           <p>Earn money delivering food. Accept orders, find the best routes, and get paid per delivery.</p>
           <a href="/driver/" class="btn btn-outline">Driver Portal</a>
+          <a href="/apk/driver.apk" class="apk-link" download>📱 Download Android App</a>
         </div>
       </div>
     </section>

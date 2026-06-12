@@ -10,6 +10,7 @@ export default function OrderDetail() {
   const { id } = useParams();
   const [order, setOrder] = useState(null);
   const [driverPos, setDriverPos] = useState(null);
+  const [routeInfo, setRouteInfo] = useState(null);
   const [ratings, setRatings] = useState({});
   const [comments, setComments] = useState({});
   const [reviewMsg, setReviewMsg] = useState("");
@@ -17,6 +18,8 @@ export default function OrderDetail() {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const driverMarkerRef = useRef(null);
+  const destMarkerRef = useRef(null);
+  const routeLineRef = useRef(null);
 
   useEffect(() => {
     const fetchOrder = () => getOrder(id).then(setOrder).catch(() => setOrder(null));
@@ -41,7 +44,7 @@ export default function OrderDetail() {
     return () => clearInterval(interval);
   }, [order]);
 
-  // render leaflet map for driver tracking
+  // render leaflet map for driver tracking + route
   useEffect(() => {
     if (!mapRef.current) return;
     if (!mapInstanceRef.current) {
@@ -52,15 +55,71 @@ export default function OrderDetail() {
       }).addTo(map);
       mapInstanceRef.current = map;
     }
+    const map = mapInstanceRef.current;
+
+    // driver marker
     if (driverPos) {
       if (driverMarkerRef.current) {
         driverMarkerRef.current.setLatLng([driverPos.lat, driverPos.lng]);
       } else {
-        driverMarkerRef.current = L.marker([driverPos.lat, driverPos.lng])
-          .addTo(mapInstanceRef.current)
-          .bindPopup("Driver");
+        driverMarkerRef.current = L.marker([driverPos.lat, driverPos.lng], {
+          icon: L.divIcon({
+            className: "",
+            html: '<div style="background:#3498db;width:16px;height:16px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 4px rgba(0,0,0,.3)"></div>',
+            iconSize: [16, 16],
+            iconAnchor: [8, 8],
+          }),
+        }).addTo(map).bindPopup("Driver");
       }
-      mapInstanceRef.current.setView([driverPos.lat, driverPos.lng]);
+    }
+
+    // destination marker (delivery address)
+    if (order?.latitude != null && order?.longitude != null) {
+      if (destMarkerRef.current) {
+        destMarkerRef.current.setLatLng([order.latitude, order.longitude]);
+      } else {
+        destMarkerRef.current = L.marker([order.latitude, order.longitude], {
+          icon: L.divIcon({
+            className: "",
+            html: '<div style="background:#e74c3c;width:16px;height:16px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 4px rgba(0,0,0,.3)"></div>',
+            iconSize: [16, 16],
+            iconAnchor: [8, 8],
+          }),
+        }).addTo(map).bindPopup("Delivery");
+      }
+    }
+
+    // fit bounds to show both
+    if (driverPos && order?.latitude != null && order?.longitude != null) {
+      map.fitBounds([
+        [driverPos.lat, driverPos.lng],
+        [order.latitude, order.longitude],
+      ], { padding: [50, 50] });
+    } else if (driverPos) {
+      map.setView([driverPos.lat, driverPos.lng], 14);
+    } else if (order?.latitude != null && order?.longitude != null) {
+      map.setView([order.latitude, order.longitude], 14);
+    }
+
+    // fetch OSRM route — debounced
+    if (driverPos && order?.latitude != null && order?.longitude != null) {
+      const timer = setTimeout(() => {
+        const url = `https://router.project-osrm.org/route/v1/driving/${driverPos.lng},${driverPos.lat};${order.longitude},${order.latitude}?geometries=geojson&overview=full`;
+        fetch(url)
+          .then((r) => r.json())
+          .then((data) => {
+            if (!data.routes?.[0]) return;
+            const route = data.routes[0];
+            const coords = route.geometry.coordinates.map((c) => [c[1], c[0]]);
+            setRouteInfo({ distance: route.distance, duration: route.duration });
+            if (routeLineRef.current) map.removeLayer(routeLineRef.current);
+            routeLineRef.current = L.polyline(coords, {
+              color: "#3498db", weight: 4, opacity: 0.7,
+            }).addTo(map);
+          })
+          .catch(() => {});
+      }, 2000);
+      return () => clearTimeout(timer);
     }
   }, [driverPos, order]);
 
@@ -106,8 +165,17 @@ export default function OrderDetail() {
         <div className="order-section">
           <h3>Your Driver</h3>
           <p><strong>{order.driverName || "Driver"}</strong></p>
-          {order.driverPhone && <p>📞 {order.driverPhone}</p>}
+          {order.driverPhone && (
+            <a href={`tel:${order.driverPhone}`} style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "var(--primary)", fontWeight: 600, textDecoration: "none", marginTop: 4 }}>
+              📞 Call {order.driverName || "Driver"} — {order.driverPhone}
+            </a>
+          )}
           <h3 style={{ marginTop: 12 }}>{driverPos ? "Driver Location" : "Driver is on the way..."}</h3>
+          {routeInfo && (
+            <p style={{ fontSize: ".8rem", color: "var(--text-muted)", marginBottom: 6 }}>
+              🗺️ {(routeInfo.distance / 1000).toFixed(1)} km · {Math.round(routeInfo.duration / 60)} min away
+            </p>
+          )}
           <div ref={mapRef} style={{ height: 220, borderRadius: 8, zIndex: 1 }} />
         </div>
       )}

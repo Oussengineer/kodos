@@ -1,11 +1,11 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { useCartStore } from "../store/useCartStore";
-import { useAuthStore } from "../store/useAuthStore";
+
+const isNative = typeof window !== "undefined" && window.Capacitor?.isNativePlatform();
 
 export default function Layout() {
   const location = useLocation();
   const itemCount = useCartStore((s) => s.getItemCount());
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   const nav = [
     { path: "/", label: "Menu", icon: "🍽️" },
@@ -18,13 +18,9 @@ export default function Layout() {
     <div className="app-layout">
       <header className="app-header">
         <span className="app-logo">Kodos</span>
-        <a
-          className="download-apk-btn"
-          href="https://kodos.onrender.com/apk/kodos-customer.apk"
-          download
-        >
+        {!isNative && <a className="download-apk-btn" href="/apk/customer.apk" download>
           📱 Download APK
-        </a>
+        </a>}
       </header>
       <main className="main-content">
         <Outlet />

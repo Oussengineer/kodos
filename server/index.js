@@ -79,6 +79,12 @@ app.use("/assets", express.static(path.join(distDir, "admin", "assets")));
 app.use("/assets", express.static(path.join(distDir, "driver", "assets")));
 app.use("/icons", express.static(path.join(distDir, "customer", "icons")));
 
+app.get("/apk/:app.apk", (req, res) => {
+  const apkPath = path.resolve(__dirname, "..", req.params.app === "admin" ? "android-admin" : req.params.app === "driver" ? "android-driver" : "android");
+  const file = path.join(apkPath, "app", "build", "outputs", "apk", "debug", "app-debug.apk");
+  res.download(file, `kodos-${req.params.app}.apk`);
+});
+
 app.get("/", (_req, res) => res.redirect("/customer/"));
 
 

@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useDriverStore } from "../store/useDriverStore";
 
+const isNative = typeof window !== "undefined" && window.Capacitor?.isNativePlatform();
+
 export default function DriverLayout() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -35,7 +37,10 @@ export default function DriverLayout() {
     <div className="app-layout">
       <header className="driver-header">
         <span className="driver-greeting">Hey, {user?.name?.split(" ")[0] || "Driver"}</span>
-        <button onClick={handleLogout} className="driver-profile-link" style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.2rem" }}>🚪</button>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {!isNative && <a className="download-apk-btn" href="/apk/driver.apk" download>📱 Download APK</a>}
+          <button onClick={handleLogout} className="driver-profile-link" style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.2rem" }}>🚪</button>
+        </div>
       </header>
       <main className="main-content">
         <Outlet />

@@ -1,6 +1,8 @@
 import { Outlet, Link, useLocation, useNavigate, Navigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 
+const isNative = typeof window !== "undefined" && window.Capacitor?.isNativePlatform();
+
 export default function AdminLayout() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -20,9 +22,12 @@ export default function AdminLayout() {
       <div className="admin-layout">
         <header className="admin-topbar">
           <span className="admin-logo">Kodos {user.name}</span>
-          <button className="admin-logout-btn" onClick={() => { logout(); navigate("/login"); }}>
-            Sign Out
-          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            {!isNative && <a className="download-apk-btn" href="/apk/admin.apk" download>📱 Download APK</a>}
+            <button className="admin-logout-btn" onClick={() => { logout(); navigate("/login"); }}>
+              Sign Out
+            </button>
+          </div>
         </header>
         <nav className="admin-sidebar">
           {navItems.map(({ path, label, icon }) => (
@@ -71,9 +76,12 @@ export default function AdminLayout() {
     <div className="admin-layout">
       <header className="admin-topbar">
         <span className="admin-logo">Kodos Admin</span>
-        <button className="admin-logout-btn" onClick={() => { logout(); navigate("/login"); }}>
-          Sign Out
-        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {!isNative && <a className="download-apk-btn" href="/apk/admin.apk" download>📱 Download APK</a>}
+          <button className="admin-logout-btn" onClick={() => { logout(); navigate("/login"); }}>
+            Sign Out
+          </button>
+        </div>
       </header>
       <nav className="admin-sidebar">
         {navItems.map(({ path, label, icon }) => (
