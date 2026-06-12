@@ -124,12 +124,12 @@ export default function OrderDetail() {
         {order.items.map((item, i) => (
           <div key={i} className="order-item-row">
             <span>{item.name} × {item.quantity}</span>
-            <span>${(item.price * item.quantity).toFixed(2)}</span>
+            <span>{(item.price * item.quantity).toFixed(2)} TND</span>
           </div>
         ))}
         <div className="order-item-row total">
           <span>Total</span>
-          <span>${order.total.toFixed(2)}</span>
+          <span>{order.total.toFixed(2)} TND</span>
         </div>
       </div>
 

@@ -75,7 +75,7 @@ export default function Orders() {
               {order.items.map((i) => i.name).join(", ")}
             </p>
             <div className="order-footer">
-              <span>${order.total.toFixed(2)}</span>
+              <span>{order.total.toFixed(2)} TND</span>
               <span>{order.items.length} items</span>
             </div>
           </Link>

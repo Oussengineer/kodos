@@ -175,7 +175,7 @@ export default function DriverActiveDelivery() {
 
             <div className="driver-order-meta">
               <span>📍 {order.address}</span>
-              <span className="driver-order-total">${order.total.toFixed(2)}</span>
+              <span className="driver-order-total">{order.total.toFixed(2)} TND</span>
             </div>
 
             {order.customerPhone && (

@@ -52,7 +52,7 @@ export default function Cart() {
   useEffect(() => {
     if (latitude != null && longitude != null && restaurant?.latitude != null) {
       const dist = haversineKm(latitude, longitude, restaurant.latitude, restaurant.longitude);
-      setDeliveryFee(Math.round(dist * 300));
+      setDeliveryFee(Math.round(dist));
     } else {
       setDeliveryFee(null);
     }
@@ -145,17 +145,17 @@ export default function Cart() {
       <div className="cart-summary">
         <div className="cart-total">
           <span>Subtotal</span>
-          <span>${getTotal().toFixed(2)}</span>
+          <span>{getTotal().toFixed(2)} TND</span>
         </div>
         {deliveryFee != null && (
           <div className="cart-total" style={{ fontSize: ".85rem", color: "var(--text-muted)" }}>
             <span>Delivery fee</span>
-            <span>${deliveryFee.toFixed(2)}</span>
+            <span>{deliveryFee.toFixed(2)} TND</span>
           </div>
         )}
         <div className="cart-total" style={{ borderTop: "1px solid var(--border)", paddingTop: 8 }}>
           <span>Total</span>
-          <span>${finalTotal.toFixed(2)}</span>
+          <span>{finalTotal.toFixed(2)} TND</span>
         </div>
         <p style={{ fontSize: ".85rem", color: "var(--text-muted)", marginBottom: 8 }}>
           Click on the map to choose your delivery location

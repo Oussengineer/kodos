@@ -49,11 +49,19 @@ export default function SplashScreen({ children }) {
             transition: "opacity 0.5s",
           }}
         >
+          <style>{`
+            video::-webkit-media-controls { display: none !important; }
+            video::-webkit-media-controls-start-playback-button { display: none !important; }
+          `}</style>
           <video
             ref={videoRef}
             autoPlay muted playsInline
             onEnded={finish}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            disablePictureInPicture
+            style={{
+              width: "100%", height: "100%",
+              objectFit: "contain",
+            }}
           >
             <source src="/splash.mp4" type="video/mp4" />
           </video>

@@ -8,7 +8,7 @@ export default function CartItem({ item }) {
       <img src={item.image} alt={item.name} className="cart-item-image" />
       <div className="cart-item-info">
         <h4>{item.name}</h4>
-        <p className="cart-item-price">${(item.price * item.quantity).toFixed(2)}</p>
+        <p className="cart-item-price">{(item.price * item.quantity).toFixed(2)} TND</p>
         <div className="quantity-controls">
           <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</button>
           <span>{item.quantity}</span>

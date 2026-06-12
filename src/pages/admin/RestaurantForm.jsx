@@ -154,7 +154,7 @@ export default function AdminRestaurantForm() {
         <div ref={mapRef} style={{ height: 280, borderRadius: 8, marginTop: 8, zIndex: 1 }} />
 
         <p style={{ fontSize: ".75rem", color: "var(--text-muted)", marginTop: 8 }}>
-          Click on the map to set position. Delivery fee = distance (km) × 300.
+          Click on the map to set position. Delivery fee = distance (km) × 1 TND.
         </p>
 
         <button type="submit" className="btn-primary" style={{ marginTop: 16 }}>

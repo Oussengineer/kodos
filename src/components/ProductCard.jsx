@@ -33,7 +33,7 @@ export default function ProductCard({ product }) {
           </div>
           <p className="product-desc">{product.description}</p>
           <div className="product-footer">
-            <span className="product-price">${product.price.toFixed(2)}</span>
+            <span className="product-price">{product.price.toFixed(2)} TND</span>
             <span className="product-time">{product.prepTime} min</span>
             <button className="btn-add" onClick={(e) => { e.stopPropagation(); addItem(product); }}>
               + Add
@@ -51,7 +51,7 @@ export default function ProductCard({ product }) {
               <h2 className="modal-title">{product.name}</h2>
               <div className="modal-meta">
                 <span className="modal-rating">★ {rating.toFixed(1)}</span>
-                <span className="modal-price">${product.price.toFixed(2)}</span>
+                <span className="modal-price">{product.price.toFixed(2)} TND</span>
                 <span className="modal-time">{product.prepTime} min</span>
               </div>
               <p className="modal-desc">{product.description}</p>

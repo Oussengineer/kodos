@@ -71,7 +71,7 @@ export default function ReviewPopup({ order, onClose }) {
                 {item.image && <img src={item.image} alt={item.name} className="review-popup-img" />}
                 <div>
                   <p className="review-popup-name">{item.name} × {item.quantity}</p>
-                  <p className="review-popup-price">${(item.price * item.quantity).toFixed(2)}</p>
+                  <p className="review-popup-price">{(item.price * item.quantity).toFixed(2)} TND</p>
                 </div>
               </div>
 

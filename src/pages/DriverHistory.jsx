@@ -50,7 +50,7 @@ export default function DriverHistory() {
             </p>
             <div className="driver-order-meta">
               <span>📍 {order.address}</span>
-              <span className="driver-order-total">${order.total.toFixed(2)}</span>
+              <span className="driver-order-total">{order.total.toFixed(2)} TND</span>
             </div>
             <p className="driver-delivered-at">
               Delivered {new Date(order.deliveredAt).toLocaleString()}

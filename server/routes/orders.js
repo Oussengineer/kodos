@@ -51,7 +51,7 @@ router.post("/", auth, async (req, res) => {
           latitude, longitude,
           restaurant.latitude, restaurant.longitude
         );
-        deliveryFee = Math.round(dist * 300);
+        deliveryFee = Math.round(dist);
       }
     }
 

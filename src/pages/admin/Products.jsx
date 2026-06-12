@@ -39,7 +39,7 @@ export default function AdminProducts() {
               <div className="admin-product-info">
                 <h4>{p.name}</h4>
                 <p className="admin-product-cat">{vendorName(p.restaurantId)} · {p.type} · {p.category}</p>
-                <span className="product-price">${p.price.toFixed(2)}</span>
+                <span className="product-price">{p.price.toFixed(2)} TND</span>
               </div>
               <div className="admin-product-actions">
                 <Link to={`/products/edit/${p.id}`} className="btn-secondary btn-xs">Edit</Link>

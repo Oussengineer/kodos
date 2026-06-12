@@ -16,7 +16,7 @@ export default function AdminOrders() {
           if (!seenIds.current.has(o.id)) {
             seenIds.current.add(o.id);
             if (o.status === "pending") {
-              sendNotification("New Order!", `#${o.id} — $${o.total.toFixed(2)} from ${o.customerName || "Customer"}`);
+              sendNotification("New Order!", `#${o.id} — {o.total.toFixed(2)} TND from ${o.customerName || "Customer"}`);
             }
           }
         }
@@ -67,7 +67,7 @@ export default function AdminOrders() {
                 <p><strong>Customer:</strong> {order.customerName}</p>
                 <p><strong>Address:</strong> {order.address}</p>
                 <p><strong>Items:</strong> {order.items.map((i) => i.name).join(", ")}</p>
-                <p><strong>Total:</strong> ${order.total.toFixed(2)}</p>
+                <p><strong>Total:</strong> {order.total.toFixed(2)} TND</p>
               </div>
               <div className="admin-order-actions">
                 {order.status !== "delivered" && order.status !== "cancelled" && (
