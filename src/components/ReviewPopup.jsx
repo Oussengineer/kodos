@@ -30,15 +30,16 @@ export default function ReviewPopup({ order, onClose }) {
   const [msg, setMsg] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const allReviewed = order.items.every((item) => ratings[item.id]);
+  const allReviewed = order.items.every((item) => ratings[item.productId || item.id]);
 
   const handleSubmit = async (productId) => {
-    if (!ratings[productId]) return;
+    const key = productId;
+    if (!ratings[key]) return;
     setSubmitting(true);
     try {
       await postReview(productId, {
-        rating: ratings[productId],
-        comment: comments[productId] || "",
+        rating: ratings[key],
+        comment: comments[key] || "",
         userName: user?.name || "Customer",
       });
       setMsg("Review submitted! ✓");
@@ -65,8 +66,8 @@ export default function ReviewPopup({ order, onClose }) {
 
           {msg && <p style={{ color: "var(--success)", marginBottom: 12, fontSize: ".9rem" }}>{msg}</p>}
 
-          {order.items.map((item) => (
-            <div key={item.id} className="review-popup-item">
+          {order.items.map((item, idx) => (
+            <div key={item.productId || item.id || idx} className="review-popup-item">
               <div className="review-popup-item-header">
                 {item.image && <img src={item.image} alt={item.name} className="review-popup-img" />}
                 <div>
@@ -79,8 +80,8 @@ export default function ReviewPopup({ order, onClose }) {
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
                     key={star}
-                    onClick={() => setRatings((prev) => ({ ...prev, [item.id]: star }))}
-                    className={`review-star-btn ${star <= (ratings[item.id] || 0) ? "active" : ""}`}
+                  onClick={() => setRatings((prev) => ({ ...prev, [item.productId || item.id]: star }))}
+                  className={`review-star-btn ${star <= (ratings[item.productId || item.id] || 0) ? "active" : ""}`}
                   >
                     ★
                   </button>
@@ -90,17 +91,17 @@ export default function ReviewPopup({ order, onClose }) {
               <input
                 type="text"
                 placeholder="Add a comment (optional)"
-                value={comments[item.id] || ""}
-                onChange={(e) => setComments((prev) => ({ ...prev, [item.id]: e.target.value }))}
+                value={comments[item.productId || item.id] || ""}
+                onChange={(e) => setComments((prev) => ({ ...prev, [item.productId || item.id]: e.target.value }))}
                 className="review-popup-input"
               />
 
               <button
                 className="btn-xs btn-primary review-submit-btn"
-                onClick={() => handleSubmit(item.id)}
-                disabled={!ratings[item.id] || submitting}
+                onClick={() => handleSubmit(item.productId || item.id)}
+                disabled={!ratings[item.productId || item.id] || submitting}
               >
-                {ratings[item.id] ? "Submit Review" : "Select a rating"}
+                {ratings[item.productId || item.id] ? "Submit Review" : "Select a rating"}
               </button>
             </div>
           ))}

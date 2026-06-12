@@ -41,3 +41,6 @@ export const updateRestaurantOrderStatus = (id, status) =>
 
 export const registerRestaurantUser = (data) =>
   client.post("/admin/restaurants/register", data).then((r) => r.data);
+
+export const registerDriverUser = (data) =>
+  client.post("/admin/drivers/register", data).then((r) => r.data);

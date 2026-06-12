@@ -8,6 +8,7 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import AdminRestaurants from "./pages/admin/Restaurants";
 import AdminRestaurantForm from "./pages/admin/RestaurantForm";
 import RestaurantUserForm from "./pages/admin/RestaurantUserForm";
+import DriverUserForm from "./pages/admin/DriverUserForm";
 import RestaurantOrders from "./pages/admin/RestaurantOrders";
 import { useAuthStore } from "./store/useAuthStore";
 import SplashScreen from "./components/SplashScreen";
@@ -19,7 +20,7 @@ function AdminHome() {
   return <AdminDashboard />;
 }
 
-const basename = window.Capacitor ? "" : "/admin";
+const basename = window.Capacitor ? "" : (import.meta.env.PROD ? "/admin" : "");
 
 export default function AppAdmin() {
   return (
@@ -38,6 +39,7 @@ export default function AppAdmin() {
             <Route path="/restaurants/new" element={<AdminRestaurantForm />} />
             <Route path="/restaurants/edit/:id" element={<AdminRestaurantForm />} />
             <Route path="/restaurants/account/new" element={<RestaurantUserForm />} />
+            <Route path="/drivers/new" element={<DriverUserForm />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>

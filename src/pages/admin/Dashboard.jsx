@@ -21,7 +21,7 @@ export default function AdminDashboard() {
 
   const cards = [
     { label: "Total Orders", value: stats.totalOrders, icon: "📋", color: "#ff6b35" },
-    { label: "Revenue", value: `{stats.totalRevenue.toFixed(2)} TND`, icon: "💰", color: "#2ecc71" },
+    { label: "Revenue", value: `${stats.totalRevenue.toFixed(2)} TND`, icon: "💰", color: "#2ecc71" },
     { label: "Pending", value: stats.pendingOrders, icon: "⏳", color: "#f39c12" },
     { label: "Preparing", value: stats.preparingOrders, icon: "👨‍🍳", color: "#3498db" },
     { label: "Out for Delivery", value: stats.outForDelivery, icon: "🚚", color: "#9b59b6" },

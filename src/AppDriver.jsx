@@ -7,7 +7,7 @@ import DriverHistory from "./pages/DriverHistory";
 import SplashScreen from "./components/SplashScreen";
 import PermissionGate from "./components/PermissionGate";
 
-const basename = window.Capacitor ? "" : "/driver";
+const basename = window.Capacitor ? "" : (import.meta.env.PROD ? "/driver" : "");
 
 export default function AppDriver() {
   return (

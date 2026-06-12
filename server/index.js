@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import path from "node:path";
@@ -79,9 +80,6 @@ app.use("/assets", express.static(path.join(distDir, "driver", "assets")));
 app.use("/icons", express.static(path.join(distDir, "customer", "icons")));
 
 app.get("/", (_req, res) => res.redirect("/customer/"));
-app.get("*", (_req, res) => {
-  res.sendFile(path.join(distDir, "customer", "index.html"));
-});
 
 
 app.listen(PORT, () => {

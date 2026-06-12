@@ -2,14 +2,8 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { getActiveDeliveries, updateDeliveryStatus, updateDriverLocation } from "../api/driver";
 import { useDriverStore } from "../store/useDriverStore";
+import "../utils/leafletIcons";
 import L from "leaflet";
-
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-});
 
 export default function DriverActiveDelivery() {
   const [deliveries, setDeliveries] = useState([]);
@@ -25,14 +19,15 @@ export default function DriverActiveDelivery() {
   const routeLineRef = useRef(null);
   const watchIdRef = useRef(null);
 
-  const fetchActive = useCallback(() => {
-    getActiveDeliveries()
-      .then((data) => {
-        setDeliveries(data);
-        setActiveDeliveries(data);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+  const fetchActive = useCallback(async () => {
+    try {
+      const data = await getActiveDeliveries();
+      setDeliveries(data);
+      setActiveDeliveries(data);
+    } catch {} finally {
+      setLoading(false);
+      setUpdating(null);
+    }
   }, [setActiveDeliveries]);
 
   useEffect(() => {
@@ -118,35 +113,38 @@ export default function DriverActiveDelivery() {
     }
   }, [driverPos, deliveries]);
 
-  // fetch route from OSRM
+  // fetch route from OSRM — debounced to avoid excessive API calls
   useEffect(() => {
     if (!driverPos || !deliveries[0]?.latitude || !deliveries[0]?.longitude) return;
-    const destLat = deliveries[0].latitude;
-    const destLng = deliveries[0].longitude;
-    const url = `https://router.project-osrm.org/route/v1/driving/${driverPos.lng},${driverPos.lat};${destLng},${destLat}?geometries=geojson&overview=full`;
-    fetch(url)
-      .then((r) => r.json())
-      .then((data) => {
-        if (!data.routes?.[0]) return;
-        const route = data.routes[0];
-        const coords = route.geometry.coordinates.map((c) => [c[1], c[0]]);
-        setRouteInfo({ distance: route.distance, duration: route.duration });
+    const timer = setTimeout(() => {
+      const destLat = deliveries[0].latitude;
+      const destLng = deliveries[0].longitude;
+      const url = `https://router.project-osrm.org/route/v1/driving/${driverPos.lng},${driverPos.lat};${destLng},${destLat}?geometries=geojson&overview=full`;
+      fetch(url)
+        .then((r) => r.json())
+        .then((data) => {
+          if (!data.routes?.[0]) return;
+          const route = data.routes[0];
+          const coords = route.geometry.coordinates.map((c) => [c[1], c[0]]);
+          setRouteInfo({ distance: route.distance, duration: route.duration });
 
-        const map = mapInstanceRef.current;
-        if (!map) return;
-        if (routeLineRef.current) map.removeLayer(routeLineRef.current);
-        routeLineRef.current = L.polyline(coords, {
-          color: "#3498db", weight: 4, opacity: 0.7,
-        }).addTo(map);
-      })
-      .catch(() => {});
+          const map = mapInstanceRef.current;
+          if (!map) return;
+          if (routeLineRef.current) map.removeLayer(routeLineRef.current);
+          routeLineRef.current = L.polyline(coords, {
+            color: "#3498db", weight: 4, opacity: 0.7,
+          }).addTo(map);
+        })
+        .catch(() => {});
+    }, 30000);
+    return () => clearTimeout(timer);
   }, [driverPos, deliveries]);
 
   const handleDelivered = async (id) => {
     setUpdating(id);
     try {
       await updateDeliveryStatus(id, "delivered");
-      fetchActive();
+      await fetchActive();
     } catch {
       setUpdating(null);
     }

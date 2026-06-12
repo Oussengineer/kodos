@@ -10,11 +10,13 @@ export default function DriverLayout() {
   const activeCount = useDriverStore((s) => s.activeDeliveries.length);
 
   useEffect(() => {
-    if (!isAuthenticated || user?.role !== "driver") {
-      if (user?.role !== "driver") logout();
+    if (!isAuthenticated) {
+      navigate("/login", { replace: true });
+    } else if (user?.role !== "driver") {
+      logout();
       navigate("/login", { replace: true });
     }
-  }, [isAuthenticated, user, navigate, logout]);
+  }, [isAuthenticated, user?.role, navigate, logout]);
 
   const handleLogout = () => {
     logout();

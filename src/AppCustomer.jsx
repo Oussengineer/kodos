@@ -11,7 +11,7 @@ import Grocery from "./pages/Grocery";
 import SplashScreen from "./components/SplashScreen";
 import PermissionGate from "./components/PermissionGate";
 
-const basename = window.Capacitor ? "" : "/customer";
+const basename = window.Capacitor ? "" : (import.meta.env.PROD ? "/customer" : "");
 
 export default function AppCustomer() {
   return (

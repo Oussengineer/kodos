@@ -56,7 +56,7 @@ export default function AdminProductForm() {
         <label>Description</label>
         <textarea value={form.description} onChange={update("description")} required rows={3} />
 
-        <label>Price ($)</label>
+        <label>Price (TND)</label>
         <input type="number" step="0.01" min="0" value={form.price} onChange={update("price")} required />
 
         <label>Type</label>

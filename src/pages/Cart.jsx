@@ -5,7 +5,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import { placeOrder } from "../api/orders";
 import { getRestaurants } from "../api/restaurants";
 import CartItem from "../components/CartItem";
-import L from "leaflet";
+import "../utils/leafletIcons";
 
 function haversineKm(lat1, lng1, lat2, lng2) {
   const R = 6371;
@@ -18,14 +18,6 @@ function haversineKm(lat1, lng1, lat2, lng2) {
       Math.sin(dLng / 2) ** 2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
-
-// Fix default marker icon for Webpack/Vite
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-});
 
 export default function Cart() {
   const { items, getTotal, clearCart } = useCartStore();

@@ -23,7 +23,7 @@ export default function DriverDashboard() {
         for (const o of data) {
           if (!seenIds.current.has(o.id)) {
             seenIds.current.add(o.id);
-            sendNotification("Delivery Available!", `Order #${o.id} — {o.total.toFixed(2)} TND`);
+            sendNotification("Delivery Available!", `Order #${o.id} — ${o.total.toFixed(2)} TND`);
           }
         }
         setOrders(data);
@@ -35,7 +35,7 @@ export default function DriverDashboard() {
   useEffect(() => {
     requestNotifyPermission();
     fetchOrders();
-    const interval = setInterval(fetchOrders, 1000);
+    const interval = setInterval(fetchOrders, 15000);
     return () => clearInterval(interval);
   }, [fetchOrders]);
 

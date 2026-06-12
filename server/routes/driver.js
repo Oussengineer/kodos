@@ -81,10 +81,17 @@ router.get("/orders/history", driverAuth, async (req, res) => {
   }
 });
 
+const acceptLock = new Map();
+
 router.post("/orders/:id/accept", driverAuth, async (req, res) => {
+  const orderId = Number(req.params.id);
+  if (acceptLock.get(orderId)) {
+    return res.status(409).json({ error: "Order is being accepted by another driver" });
+  }
+  acceptLock.set(orderId, true);
   try {
     const orders = await getJSON(ORDERS_PATH);
-    const idx = orders.findIndex((o) => o.id === Number(req.params.id));
+    const idx = orders.findIndex((o) => o.id === orderId);
     if (idx === -1) return res.status(404).json({ error: "Order not found" });
     if (orders[idx].driverId) {
       return res.status(409).json({ error: "Order already accepted by another driver" });
@@ -96,6 +103,8 @@ router.post("/orders/:id/accept", driverAuth, async (req, res) => {
     res.json(orders[idx]);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  } finally {
+    acceptLock.delete(orderId);
   }
 });
 

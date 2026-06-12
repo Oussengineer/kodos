@@ -1,7 +1,9 @@
 import { Router } from "express";
 import { readFile, writeFile } from "node:fs/promises";
+import bcrypt from "bcryptjs";
 
 const router = Router();
+const SALT_ROUNDS = 10;
 const ORDERS_PATH = new URL("../data/orders.json", import.meta.url);
 const PRODUCTS_PATH = new URL("../data/products.json", import.meta.url);
 const USERS_PATH = new URL("../data/users.json", import.meta.url);
@@ -239,6 +241,27 @@ router.patch("/restaurant/orders/:id/status", restaurantAuth, async (req, res) =
   }
 });
 
+// Register a driver user account (admin only)
+router.post("/drivers/register", adminAuth, async (req, res) => {
+  try {
+    const { name, email, password, phone } = req.body;
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: "Name, email, and password are required" });
+    }
+    const users = await getJSON(USERS_PATH);
+    if (users.find((u) => u.email === email)) {
+      return res.status(409).json({ error: "Email already registered" });
+    }
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+    const user = { id: Date.now(), name, email, password: hashedPassword, role: "driver", phone: phone || "" };
+    users.push(user);
+    await writeFile(USERS_PATH, JSON.stringify(users, null, 2));
+    res.status(201).json({ user: { id: user.id, name: user.name, email: user.email, role: user.role, phone: user.phone } });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Register a restaurant user account (admin only)
 router.post("/restaurants/register", adminAuth, async (req, res) => {
   try {
@@ -250,7 +273,8 @@ router.post("/restaurants/register", adminAuth, async (req, res) => {
     if (users.find((u) => u.email === email)) {
       return res.status(409).json({ error: "Email already registered" });
     }
-    const user = { id: Date.now(), name, email, password, role: "restaurant", restaurantId: Number(restaurantId) };
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+    const user = { id: Date.now(), name, email, password: hashedPassword, role: "restaurant", restaurantId: Number(restaurantId) };
     users.push(user);
     await writeFile(USERS_PATH, JSON.stringify(users, null, 2));
     res.status(201).json({ user: { id: user.id, name: user.name, email: user.email, role: user.role, restaurantId: user.restaurantId } });

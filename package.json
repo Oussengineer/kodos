@@ -8,8 +8,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "dev:admin": "set VITE_APP=admin&& vite",
-    "dev:driver": "set VITE_APP=driver&& vite",
+    "dev:admin": "set VITE_APP=admin && vite",
+    "dev:driver": "set VITE_APP=driver && vite",
     "build": "vite build",
     "build:customer": "cross-env VITE_APP=customer vite build && node -e \"require('fs').copyFileSync('dist/customer/customer.html','dist/customer/index.html')\"",
     "build:admin": "cross-env VITE_APP=admin vite build && node -e \"require('fs').copyFileSync('dist/admin/admin.html','dist/admin/index.html')\"",
@@ -41,6 +41,7 @@
     "@capacitor/core": "^8.4.0",
     "@capacitor/local-notifications": "^8.2.0",
     "axios": "^1.17.0",
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "express": "^4.21.0",
     "leaflet": "^1.9.4",

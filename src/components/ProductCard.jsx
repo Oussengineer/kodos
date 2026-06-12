@@ -4,7 +4,7 @@ import { getProductReviews } from "../api/products";
 
 export default function ProductCard({ product }) {
   const addItem = useCartStore((s) => s.addItem);
-  const rating = product.avgRating || product.rating;
+  const rating = product.avgRating ?? product.rating ?? 0;
   const reviews = product.reviewCount || 0;
   const [showModal, setShowModal] = useState(false);
   const [reviewsList, setReviewsList] = useState([]);

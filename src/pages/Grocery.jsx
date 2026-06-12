@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getProducts } from "../api/products";
-import { getRestaurant } from "../api/restaurants";
+import { getRestaurant, getRestaurants } from "../api/restaurants";
 import ProductCard from "../components/ProductCard";
 
 export default function Grocery() {
@@ -12,7 +12,16 @@ export default function Grocery() {
   useEffect(() => {
     setError("");
     getProducts({ type: "grocery" }).then(setProducts).catch(() => {});
-    getRestaurant(6).then(setStore).catch((e) => setError(e.response?.data?.error || "Failed to load store"));
+    getRestaurant(0).then((r) => {
+      if (r && r.id) { setStore(r); return; }
+      throw new Error("Grocery store not found");
+    }).catch((e) => {
+      getRestaurants().then((restaurants) => {
+        const grocery = restaurants.find((r) => r.type === "grocery");
+        if (grocery) { setStore(grocery); }
+        else { setError("Grocery store not found"); }
+      }).catch(() => setError("Failed to load store"));
+    });
   }, []);
 
   if (error) return <div className="page"><Link to="/" className="back-link">← Back</Link><div className="empty-state"><p style={{ color: "var(--danger)" }}>{error}</p></div></div>;
