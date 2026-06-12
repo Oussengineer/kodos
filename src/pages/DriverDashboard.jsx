@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAvailableOrders, acceptOrder } from "../api/driver";
 import { useDriverStore } from "../store/useDriverStore";
+import { requestNotifyPermission, sendNotification } from "../utils/notify";
 
 const STATUS_COLORS = {
   preparing: { bg: "#fff3cd", color: "#856404", label: "Preparing" },
@@ -14,15 +15,25 @@ export default function DriverDashboard() {
   const [accepting, setAccepting] = useState(null);
   const setActiveDeliveries = useDriverStore((s) => s.setActiveDeliveries);
   const navigate = useNavigate();
+  const seenIds = useRef(new Set());
 
   const fetchOrders = useCallback(() => {
     getAvailableOrders()
-      .then(setOrders)
+      .then((data) => {
+        for (const o of data) {
+          if (!seenIds.current.has(o.id)) {
+            seenIds.current.add(o.id);
+            sendNotification("Delivery Available!", `Order #${o.id} — $${o.total.toFixed(2)}`);
+          }
+        }
+        setOrders(data);
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
+    requestNotifyPermission();
     fetchOrders();
     const interval = setInterval(fetchOrders, 10000);
     return () => clearInterval(interval);

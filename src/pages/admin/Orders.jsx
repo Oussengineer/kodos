@@ -1,17 +1,32 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { getAllOrders, updateOrderStatus } from "../../api/admin";
+import { requestNotifyPermission, sendNotification } from "../../utils/notify";
 
 const STATUS_FLOW = ["pending", "confirmed", "preparing"];
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
+  const seenIds = useRef(new Set());
 
   const fetchOrders = useCallback(() => {
-    getAllOrders().then(setOrders).catch(() => {});
+    getAllOrders()
+      .then((data) => {
+        for (const o of data) {
+          if (!seenIds.current.has(o.id)) {
+            seenIds.current.add(o.id);
+            if (o.status === "pending") {
+              sendNotification("New Order!", `#${o.id} — $${o.total.toFixed(2)} from ${o.customerName || "Customer"}`);
+            }
+          }
+        }
+        setOrders(data);
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
+    requestNotifyPermission();
     fetchOrders();
     const interval = setInterval(fetchOrders, 10000);
     return () => clearInterval(interval);
