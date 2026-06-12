@@ -2,13 +2,11 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getRestaurants } from "../api/restaurants";
 
-const TYPE_ICONS = { restaurant: "🍽️", grocery: "🛒" };
-
 export default function Home() {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState("restaurants");
+  const [activeTab, setActiveTab] = useState("restaurant");
 
   useEffect(() => {
     setLoading(true);
@@ -30,8 +28,8 @@ export default function Home() {
 
       <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
         <button
-          className={`chip ${activeTab === "restaurants" ? "chip-active" : ""}`}
-          onClick={() => setActiveTab("restaurants")}
+          className={`chip ${activeTab === "restaurant" ? "chip-active" : ""}`}
+          onClick={() => setActiveTab("restaurant")}
         >🍽️ Restaurants</button>
         <button
           className={`chip ${activeTab === "grocery" ? "chip-active" : ""}`}
@@ -50,7 +48,7 @@ export default function Home() {
           {filtered.map((r) => (
             <Link
               key={r.id}
-              to={`/${activeTab === "grocery" ? "grocery" : "restaurant"}/${r.id}`}
+              to={`/${r.type === "grocery" ? "grocery" : "restaurant"}/${r.id}`}
               style={{
                 display: "flex", gap: 12, background: "var(--surface)", borderRadius: "var(--radius)",
                 boxShadow: "var(--shadow)", padding: 12, textDecoration: "none", color: "inherit",
