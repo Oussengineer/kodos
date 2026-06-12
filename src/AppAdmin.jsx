@@ -11,6 +11,7 @@ import RestaurantUserForm from "./pages/admin/RestaurantUserForm";
 import RestaurantOrders from "./pages/admin/RestaurantOrders";
 import { useAuthStore } from "./store/useAuthStore";
 import SplashScreen from "./components/SplashScreen";
+import PermissionGate from "./components/PermissionGate";
 
 function AdminHome() {
   const user = useAuthStore((s) => s.user);
@@ -24,6 +25,7 @@ export default function AppAdmin() {
   return (
     <SplashScreen>
       <BrowserRouter basename={basename}>
+        <PermissionGate>
         <Routes>
           <Route path="/login" element={<AdminLogin />} />
           <Route element={<AdminLayout />}>
@@ -39,6 +41,7 @@ export default function AppAdmin() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>
+        </PermissionGate>
       </BrowserRouter>
     </SplashScreen>
   );

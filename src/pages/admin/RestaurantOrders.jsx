@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { getRestaurantOrders, updateRestaurantOrderStatus } from "../../api/admin";
+import { requestNotifyPermission, sendNotification } from "../../utils/notify";
 
 const STATUS_FLOW = ["pending", "confirmed", "preparing"];
 
@@ -14,6 +15,7 @@ export default function RestaurantOrders() {
         for (const o of data) {
           if (!seenIds.current.has(o.id)) {
             seenIds.current.add(o.id);
+            sendNotification("New Order!", `Order #${o.id} — ${o.customerName} — ${o.total.toFixed(2)} TND`);
           }
         }
         setOrders(data);
@@ -23,6 +25,7 @@ export default function RestaurantOrders() {
   }, []);
 
   useEffect(() => {
+    requestNotifyPermission();
     fetchOrders();
     const interval = setInterval(fetchOrders, 3000);
     return () => clearInterval(interval);

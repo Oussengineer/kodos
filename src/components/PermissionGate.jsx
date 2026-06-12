@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { requestNotifyPermission } from "../utils/notify";
 
 const PERM_KEY = "kodos_permissions_granted";
 
@@ -22,15 +23,8 @@ export default function PermissionGate({ children }) {
 
   const handleContinue = () => {
     setStep("requesting");
-
-    if ("Notification" in window && Notification.permission === "default") {
-      Notification.requestPermission();
-    }
-
-    try {
-      localStorage.setItem(PERM_KEY, "1");
-    } catch {}
-
+    requestNotifyPermission();
+    localStorage.setItem(PERM_KEY, "1");
     setTimeout(() => setDone(true), 500);
   };
 

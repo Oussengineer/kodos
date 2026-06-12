@@ -1,17 +1,23 @@
 import { create } from "zustand";
 
+const prefix = import.meta.env.VITE_APP || "customer";
+
+const loadUser = () => {
+  try { return JSON.parse(localStorage.getItem(`${prefix}_user`) || "null"); } catch { return null; }
+};
+
 export const useAuthStore = create((set) => ({
-  user: JSON.parse(localStorage.getItem("user") || "null"),
-  token: localStorage.getItem("token") || null,
-  isAuthenticated: !!localStorage.getItem("token"),
+  user: loadUser(),
+  token: localStorage.getItem(`${prefix}_token`) || null,
+  isAuthenticated: !!localStorage.getItem(`${prefix}_token`),
   setAuth: (user, token) => {
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("token", token);
+    localStorage.setItem(`${prefix}_user`, JSON.stringify(user));
+    localStorage.setItem(`${prefix}_token`, token);
     set({ user, token, isAuthenticated: true });
   },
   logout: () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
+    localStorage.removeItem(`${prefix}_user`);
+    localStorage.removeItem(`${prefix}_token`);
     set({ user: null, token: null, isAuthenticated: false });
   },
 }));
