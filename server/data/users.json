@@ -1,4 +1,4 @@
 [
-  { "id": 1, "name": "Admin", "email": "admin@kodos.com", "password": "admin123", "role": "admin" },
-  { "id": 2, "name": "Driver", "email": "driver@kodos.com", "password": "driver123", "phone": "+216 50 123 456", "role": "driver" }
+  { "id": 1, "name": "Admin", "email": "admin@kodos.com", "password": "$2b$10$EIeaGsglIf0pFrPwU9Qkleu1qYr1VFgS52TAHnMCsowIq/ZoCGQXu", "role": "admin" },
+  { "id": 2, "name": "Driver", "email": "driver@kodos.com", "password": "$2b$10$lMpv9FdhkuxFyOOspUt8TO0BTl9uNuUioj5aREjZ7WrTL2jN9QS9K", "phone": "+216 50 123 456", "role": "driver" }
 ]
