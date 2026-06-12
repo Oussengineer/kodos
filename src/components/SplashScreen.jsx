@@ -43,7 +43,7 @@ export default function SplashScreen({ children }) {
           onClick={handleSkip}
           style={{
             position: "fixed", inset: 0, zIndex: 99999,
-            background: "#000",
+            background: "#fff",
             display: "flex", alignItems: "center", justifyContent: "center",
             opacity: fade ? 0 : 1,
             transition: "opacity 0.5s",
@@ -51,6 +51,7 @@ export default function SplashScreen({ children }) {
         >
           <style>{`
             video::-webkit-media-controls { display: none !important; }
+            video::-webkit-media-controls-overlay-play-button { display: none !important; }
             video::-webkit-media-controls-start-playback-button { display: none !important; }
           `}</style>
           <video
@@ -58,6 +59,8 @@ export default function SplashScreen({ children }) {
             autoPlay muted playsInline
             onEnded={finish}
             disablePictureInPicture
+            preload="auto"
+            poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
             style={{
               width: "100%", height: "100%",
               objectFit: "contain",

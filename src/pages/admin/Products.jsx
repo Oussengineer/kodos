@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getAdminProducts, deleteProduct, getAdminRestaurants } from "../../api/admin";
+import { useAuthStore } from "../../store/useAuthStore";
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
   const [restaurants, setRestaurants] = useState([]);
+  const user = useAuthStore((s) => s.user);
+  const isAdmin = user?.role === "admin";
 
   useEffect(() => {
     getAdminProducts().then(setProducts).catch(() => {});
@@ -22,10 +25,10 @@ export default function AdminProducts() {
   return (
     <div className="page admin-page">
       <div className="admin-header">
-        <Link to="/" className="back-link">← Dashboard</Link>
+        <Link to="/" className="back-link">← {isAdmin ? "Dashboard" : "Orders"}</Link>
         <div className="admin-header-row">
           <h1>Products</h1>
-          <Link to="/products/new" className="btn-primary btn-sm">+ Add</Link>
+          {isAdmin && <Link to="/products/new" className="btn-primary btn-sm">+ Add</Link>}
         </div>
       </div>
 
@@ -41,10 +44,12 @@ export default function AdminProducts() {
                 <p className="admin-product-cat">{vendorName(p.restaurantId)} · {p.type} · {p.category}</p>
                 <span className="product-price">{p.price.toFixed(2)} TND</span>
               </div>
-              <div className="admin-product-actions">
-                <Link to={`/products/edit/${p.id}`} className="btn-secondary btn-xs">Edit</Link>
-                <button className="btn-secondary btn-xs btn-danger" onClick={() => handleDelete(p.id)}>Del</button>
-              </div>
+              {isAdmin && (
+                <div className="admin-product-actions">
+                  <Link to={`/products/edit/${p.id}`} className="btn-secondary btn-xs">Edit</Link>
+                  <button className="btn-secondary btn-xs btn-danger" onClick={() => handleDelete(p.id)}>Del</button>
+                </div>
+              )}
             </div>
           ))}
         </div>

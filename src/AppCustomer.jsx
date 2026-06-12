@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import RestaurantDetail from "./pages/RestaurantDetail";
 import Grocery from "./pages/Grocery";
 import SplashScreen from "./components/SplashScreen";
+import PermissionGate from "./components/PermissionGate";
 
 const basename = window.Capacitor ? "" : "/customer";
 
@@ -16,6 +17,7 @@ export default function AppCustomer() {
   return (
     <SplashScreen>
       <BrowserRouter basename={basename}>
+        <PermissionGate>
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
@@ -29,6 +31,7 @@ export default function AppCustomer() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>
+        </PermissionGate>
       </BrowserRouter>
     </SplashScreen>
   );

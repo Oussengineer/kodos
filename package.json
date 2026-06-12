@@ -28,13 +28,20 @@
     "apk:customer": "npm run build:customer && npm run cap:sync:customer && cd android && .\\gradlew assembleDebug",
     "apk:admin": "npm run build:admin && npm run cap:sync:admin && cd android-admin && .\\gradlew assembleDebug",
     "apk:driver": "npm run build:driver && npm run cap:sync:driver && cd android-driver && .\\gradlew assembleDebug",
-    "apk:all": "npm run build:all && npm run apk:customer && npm run apk:admin && npm run apk:driver"
+    "apk:release:customer": "npm run build:customer && npm run cap:sync:customer && cd android && .\\gradlew assembleRelease",
+    "apk:release:admin": "npm run build:admin && npm run cap:sync:admin && cd android-admin && .\\gradlew assembleRelease",
+    "apk:release:driver": "npm run build:driver && npm run cap:sync:driver && cd android-driver && .\\gradlew assembleRelease",
+    "apk:release:all": "npm run build:all && npm run apk:release:customer && npm run apk:release:admin && npm run apk:release:driver",
+    "apk:all": "npm run build:all && npm run apk:customer && npm run apk:admin && npm run apk:driver",
+    "start": "node server/index.js"
   },
   "dependencies": {
     "@capacitor/android": "^8.4.0",
     "@capacitor/cli": "^8.4.0",
     "@capacitor/core": "^8.4.0",
     "axios": "^1.17.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
     "leaflet": "^1.9.4",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",

@@ -14,8 +14,8 @@ export default function AdminLogin() {
     setError("");
     try {
       const data = await login(form.email, form.password);
-      if (data.user.role !== "admin") {
-        setError("This login is for admins only");
+      if (data.user.role !== "admin" && data.user.role !== "restaurant") {
+        setError("Access denied");
         return;
       }
       setAuth(data.user, data.token);

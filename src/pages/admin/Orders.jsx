@@ -1,50 +1,21 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { getAllOrders, updateOrderStatus } from "../../api/admin";
-import { requestNotifyPermission, sendNotification } from "../../utils/notify";
-
-const STATUS_FLOW = ["pending", "confirmed", "preparing"];
+import { getAllOrders } from "../../api/admin";
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
-  const seenIds = useRef(new Set());
 
   const fetchOrders = useCallback(() => {
     getAllOrders()
-      .then((data) => {
-        for (const o of data) {
-          if (!seenIds.current.has(o.id)) {
-            seenIds.current.add(o.id);
-            if (o.status === "pending") {
-              sendNotification("New Order!", `#${o.id} — {o.total.toFixed(2)} TND from ${o.customerName || "Customer"}`);
-            }
-          }
-        }
-        setOrders(data);
-      })
+      .then((data) => setOrders(data))
       .catch(() => {});
   }, []);
 
   useEffect(() => {
-    requestNotifyPermission();
     fetchOrders();
-    const interval = setInterval(fetchOrders, 1000);
+    const interval = setInterval(fetchOrders, 5000);
     return () => clearInterval(interval);
   }, [fetchOrders]);
-
-  const advanceStatus = async (order) => {
-    const idx = STATUS_FLOW.indexOf(order.status);
-    if (idx < STATUS_FLOW.length - 1) {
-      const next = STATUS_FLOW[idx + 1];
-      await updateOrderStatus(order.id, next);
-      setOrders((prev) => prev.map((o) => o.id === order.id ? { ...o, status: next } : o));
-    }
-  };
-
-  const cancelStatus = async (order) => {
-    await updateOrderStatus(order.id, "cancelled");
-    setOrders((prev) => prev.map((o) => o.id === order.id ? { ...o, status: "cancelled" } : o));
-  };
 
   return (
     <div className="page admin-page">
@@ -68,18 +39,6 @@ export default function AdminOrders() {
                 <p><strong>Address:</strong> {order.address}</p>
                 <p><strong>Items:</strong> {order.items.map((i) => i.name).join(", ")}</p>
                 <p><strong>Total:</strong> {order.total.toFixed(2)} TND</p>
-              </div>
-              <div className="admin-order-actions">
-                {order.status !== "delivered" && order.status !== "cancelled" && (
-                  <button className="btn-primary btn-sm" onClick={() => advanceStatus(order)}>
-                    Advance → {STATUS_FLOW[STATUS_FLOW.indexOf(order.status) + 1]?.replace(/_/g, " ")}
-                  </button>
-                )}
-                {order.status !== "cancelled" && order.status !== "delivered" && (
-                  <button className="btn-secondary btn-sm btn-danger" onClick={() => cancelStatus(order)}>
-                    Cancel
-                  </button>
-                )}
               </div>
             </div>
           ))}

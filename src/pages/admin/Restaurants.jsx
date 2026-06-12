@@ -22,6 +22,7 @@ export default function AdminRestaurants() {
         <div className="admin-header-row">
           <h1>Vendors</h1>
           <Link to="/restaurants/new" className="btn-primary btn-sm">Add</Link>
+          <Link to="/restaurants/account/new" className="btn-secondary btn-sm" style={{ marginLeft: 8 }}>+ Account</Link>
         </div>
       </div>
 

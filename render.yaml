@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: kodos
+    env: node
+    region: frankfurt
+    buildCommand: npm install && npm run build:all
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 22

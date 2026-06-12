@@ -29,3 +29,4 @@ android-admin/
 android-driver/
 capacitor.config.json
 *.local
+kodos-release.keystore

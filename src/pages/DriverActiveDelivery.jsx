@@ -17,10 +17,12 @@ export default function DriverActiveDelivery() {
   const [updating, setUpdating] = useState(null);
   const [driverPos, setDriverPos] = useState(null);
   const setActiveDeliveries = useDriverStore((s) => s.setActiveDeliveries);
+  const [routeInfo, setRouteInfo] = useState(null);
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const destMarkerRef = useRef(null);
   const driverMarkerRef = useRef(null);
+  const routeLineRef = useRef(null);
   const watchIdRef = useRef(null);
 
   const fetchActive = useCallback(() => {
@@ -116,6 +118,30 @@ export default function DriverActiveDelivery() {
     }
   }, [driverPos, deliveries]);
 
+  // fetch route from OSRM
+  useEffect(() => {
+    if (!driverPos || !deliveries[0]?.latitude || !deliveries[0]?.longitude) return;
+    const destLat = deliveries[0].latitude;
+    const destLng = deliveries[0].longitude;
+    const url = `https://router.project-osrm.org/route/v1/driving/${driverPos.lng},${driverPos.lat};${destLng},${destLat}?geometries=geojson&overview=full`;
+    fetch(url)
+      .then((r) => r.json())
+      .then((data) => {
+        if (!data.routes?.[0]) return;
+        const route = data.routes[0];
+        const coords = route.geometry.coordinates.map((c) => [c[1], c[0]]);
+        setRouteInfo({ distance: route.distance, duration: route.duration });
+
+        const map = mapInstanceRef.current;
+        if (!map) return;
+        if (routeLineRef.current) map.removeLayer(routeLineRef.current);
+        routeLineRef.current = L.polyline(coords, {
+          color: "#3498db", weight: 4, opacity: 0.7,
+        }).addTo(map);
+      })
+      .catch(() => {});
+  }, [driverPos, deliveries]);
+
   const handleDelivered = async (id) => {
     setUpdating(id);
     try {
@@ -150,6 +176,11 @@ export default function DriverActiveDelivery() {
     <div className="page driver-active">
       <h2>Active Deliveries</h2>
       <p className="subtitle">{deliveries.length} delivery in progress</p>
+      {routeInfo && (
+        <p style={{ fontSize: ".8rem", color: "var(--text-muted)", marginBottom: 8 }}>
+          🗺️ {(routeInfo.distance / 1000).toFixed(1)} km · {Math.round(routeInfo.duration / 60)} min
+        </p>
+      )}
 
       {/* destination map */}
       {deliveries[0]?.latitude && deliveries[0]?.longitude && (

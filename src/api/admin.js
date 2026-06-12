@@ -32,3 +32,12 @@ export const updateRestaurant = (id, data) =>
 
 export const deleteRestaurant = (id) =>
   client.delete(`/admin/restaurants/${id}`).then((r) => r.data);
+
+export const getRestaurantOrders = () =>
+  client.get("/admin/restaurant/orders").then((r) => r.data);
+
+export const updateRestaurantOrderStatus = (id, status) =>
+  client.patch(`/admin/restaurant/orders/${id}/status`, { status }).then((r) => r.data);
+
+export const registerRestaurantUser = (data) =>
+  client.post("/admin/restaurants/register", data).then((r) => r.data);

@@ -10,6 +10,39 @@ export default function AdminLayout() {
     return <Navigate to="/login" replace />;
   }
 
+  if (user?.role === "restaurant") {
+    const navItems = [
+      { path: "/", label: "Orders", icon: "📋" },
+      { path: "/products", label: "Products", icon: "🍽️" },
+    ];
+
+    return (
+      <div className="admin-layout">
+        <header className="admin-topbar">
+          <span className="admin-logo">Kodos {user.name}</span>
+          <button className="admin-logout-btn" onClick={() => { logout(); navigate("/login"); }}>
+            Sign Out
+          </button>
+        </header>
+        <nav className="admin-sidebar">
+          {navItems.map(({ path, label, icon }) => (
+            <Link
+              key={path}
+              to={path}
+              className={`admin-sidebar-item ${location.pathname === path ? "active" : ""}`}
+            >
+              <span>{icon}</span>
+              <span>{label}</span>
+            </Link>
+          ))}
+        </nav>
+        <main className="admin-main">
+          <Outlet />
+        </main>
+      </div>
+    );
+  }
+
   if (user?.role !== "admin") {
     return (
       <div className="page auth-page">

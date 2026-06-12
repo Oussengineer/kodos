@@ -7,7 +7,16 @@ import AdminProductForm from "./pages/admin/ProductForm";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminRestaurants from "./pages/admin/Restaurants";
 import AdminRestaurantForm from "./pages/admin/RestaurantForm";
+import RestaurantUserForm from "./pages/admin/RestaurantUserForm";
+import RestaurantOrders from "./pages/admin/RestaurantOrders";
+import { useAuthStore } from "./store/useAuthStore";
 import SplashScreen from "./components/SplashScreen";
+
+function AdminHome() {
+  const user = useAuthStore((s) => s.user);
+  if (user?.role === "restaurant") return <RestaurantOrders />;
+  return <AdminDashboard />;
+}
 
 const basename = window.Capacitor ? "" : "/admin";
 
@@ -18,7 +27,7 @@ export default function AppAdmin() {
         <Routes>
           <Route path="/login" element={<AdminLogin />} />
           <Route element={<AdminLayout />}>
-            <Route path="/" element={<AdminDashboard />} />
+            <Route path="/" element={<AdminHome />} />
             <Route path="/orders" element={<AdminOrders />} />
             <Route path="/products" element={<AdminProducts />} />
             <Route path="/products/new" element={<AdminProductForm />} />
@@ -26,6 +35,7 @@ export default function AppAdmin() {
             <Route path="/restaurants" element={<AdminRestaurants />} />
             <Route path="/restaurants/new" element={<AdminRestaurantForm />} />
             <Route path="/restaurants/edit/:id" element={<AdminRestaurantForm />} />
+            <Route path="/restaurants/account/new" element={<RestaurantUserForm />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>
