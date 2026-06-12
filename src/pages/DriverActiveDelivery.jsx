@@ -115,31 +115,41 @@ export default function DriverActiveDelivery() {
     }
   }, [driverPos, deliveries]);
 
-  // fetch route from OSRM — debounced to avoid excessive API calls
+  // fetch route from OSRM — throttled to ~15s between calls
+  const lastRouteFetch = useRef(0);
+  const lastRouteOrderId = useRef(null);
   useEffect(() => {
     if (!driverPos || !deliveries[0]?.latitude || !deliveries[0]?.longitude) return;
-    const timer = setTimeout(() => {
-      const destLat = deliveries[0].latitude;
-      const destLng = deliveries[0].longitude;
-      const url = `https://router.project-osrm.org/route/v1/driving/${driverPos.lng},${driverPos.lat};${destLng},${destLat}?geometries=geojson&overview=full`;
-      fetch(url)
-        .then((r) => r.json())
-        .then((data) => {
-          if (!data.routes?.[0]) return;
-          const route = data.routes[0];
-          const coords = route.geometry.coordinates.map((c) => [c[1], c[0]]);
-          setRouteInfo({ distance: route.distance, duration: route.duration });
 
-          const map = mapInstanceRef.current;
-          if (!map) return;
-          if (routeLineRef.current) map.removeLayer(routeLineRef.current);
-          routeLineRef.current = L.polyline(coords, {
-            color: "#3498db", weight: 4, opacity: 0.7,
-          }).addTo(map);
-        })
-        .catch(() => {});
-    }, 30000);
-    return () => clearTimeout(timer);
+    const orderId = deliveries[0].id;
+    if (orderId !== lastRouteOrderId.current) {
+      lastRouteFetch.current = 0;
+      lastRouteOrderId.current = orderId;
+    }
+
+    const now = Date.now();
+    if (now - lastRouteFetch.current < 15000) return;
+    lastRouteFetch.current = now;
+
+    const destLat = deliveries[0].latitude;
+    const destLng = deliveries[0].longitude;
+    const url = `https://router.project-osrm.org/route/v1/driving/${driverPos.lng},${driverPos.lat};${destLng},${destLat}?geometries=geojson&overview=full`;
+    fetch(url)
+      .then((r) => r.json())
+      .then((data) => {
+        if (!data.routes?.[0]) return;
+        const route = data.routes[0];
+        const coords = route.geometry.coordinates.map((c) => [c[1], c[0]]);
+        setRouteInfo({ distance: route.distance, duration: route.duration });
+
+        const map = mapInstanceRef.current;
+        if (!map) return;
+        if (routeLineRef.current) map.removeLayer(routeLineRef.current);
+        routeLineRef.current = L.polyline(coords, {
+          color: "#3498db", weight: 4, opacity: 0.7,
+        }).addTo(map);
+      })
+      .catch(() => {});
   }, [driverPos, deliveries]);
 
   const handleDelivered = async (id) => {

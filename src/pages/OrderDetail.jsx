@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { getOrder, getDriverLocation, postReview } from "../api/orders";
 import { useAuthStore } from "../store/useAuthStore";
 import "../utils/leafletIcons";
+import L from "leaflet";
 import { useTranslation } from "react-i18next";
 
 const STATUS_FLOW = ["pending", "confirmed", "preparing", "out_for_delivery", "delivered"];
@@ -67,11 +68,11 @@ export default function OrderDetail() {
         driverMarkerRef.current = L.marker([driverPos.lat, driverPos.lng], {
           icon: L.divIcon({
             className: "",
-            html: '<div style="background:#3498db;width:16px;height:16px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 4px rgba(0,0,0,.3)"></div>',
-            iconSize: [16, 16],
-            iconAnchor: [8, 8],
+            html: '<div style="font-size:32px;line-height:1;text-align:center;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))">🏍️</div>',
+            iconSize: [32, 32],
+            iconAnchor: [16, 16],
           }),
-        }).addTo(map).bindPopup("Driver");
+        }).addTo(map).bindPopup(`Driver: ${order?.driverName || "Driver"}`);
       }
     }
 
@@ -83,9 +84,9 @@ export default function OrderDetail() {
         destMarkerRef.current = L.marker([order.latitude, order.longitude], {
           icon: L.divIcon({
             className: "",
-            html: '<div style="background:#e74c3c;width:16px;height:16px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 4px rgba(0,0,0,.3)"></div>',
-            iconSize: [16, 16],
-            iconAnchor: [8, 8],
+            html: '<div style="font-size:28px;line-height:1;text-align:center;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))">📍</div>',
+            iconSize: [28, 28],
+            iconAnchor: [14, 14],
           }),
         }).addTo(map).bindPopup("Delivery");
       }
