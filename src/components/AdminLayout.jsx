@@ -1,4 +1,4 @@
-import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate, Navigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 
 export default function AdminLayout() {
@@ -7,19 +7,7 @@ export default function AdminLayout() {
   const { user, isAuthenticated, logout } = useAuthStore();
 
   if (!isAuthenticated) {
-    return (
-      <div className="page auth-page">
-        <div className="auth-card">
-          <h1>Admin Sign In</h1>
-          <p style={{ textAlign: "center", marginBottom: 16, color: "var(--text-muted)" }}>
-            Sign in to access the admin panel
-          </p>
-          <Link to="/login" className="btn-primary" style={{ display: "block" }}>
-            Go to Login
-          </Link>
-        </div>
-      </div>
-    );
+    return <Navigate to="/login" replace />;
   }
 
   if (user?.role !== "admin") {

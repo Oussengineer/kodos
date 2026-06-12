@@ -1,18 +1,24 @@
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useDriverStore } from "../store/useDriverStore";
 
 export default function DriverLayout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const user = useAuthStore((s) => s.user);
-  const logout = useAuthStore((s) => s.logout);
+  const { user, isAuthenticated, logout } = useAuthStore();
   const activeCount = useDriverStore((s) => s.activeDeliveries.length);
+
+  useEffect(() => {
+    if (!isAuthenticated) navigate("/login", { replace: true });
+  }, [isAuthenticated, navigate]);
 
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
+
+  if (!isAuthenticated) return null;
 
   const nav = [
     { path: "/", label: "Available", icon: "📋" },

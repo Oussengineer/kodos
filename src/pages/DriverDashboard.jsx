@@ -35,7 +35,7 @@ export default function DriverDashboard() {
   useEffect(() => {
     requestNotifyPermission();
     fetchOrders();
-    const interval = setInterval(fetchOrders, 10000);
+    const interval = setInterval(fetchOrders, 1000);
     return () => clearInterval(interval);
   }, [fetchOrders]);
 
