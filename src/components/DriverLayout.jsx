@@ -10,15 +10,18 @@ export default function DriverLayout() {
   const activeCount = useDriverStore((s) => s.activeDeliveries.length);
 
   useEffect(() => {
-    if (!isAuthenticated) navigate("/login", { replace: true });
-  }, [isAuthenticated, navigate]);
+    if (!isAuthenticated || user?.role !== "driver") {
+      if (user?.role !== "driver") logout();
+      navigate("/login", { replace: true });
+    }
+  }, [isAuthenticated, user, navigate, logout]);
 
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
 
-  if (!isAuthenticated) return null;
+  if (!isAuthenticated || user?.role !== "driver") return null;
 
   const nav = [
     { path: "/", label: "Available", icon: "📋" },
