@@ -32,38 +32,44 @@ export default function OrderDetail() {
     return () => clearInterval(interval);
   }, [id]);
 
-  // driver tracking polling
+  // driver tracking polling — 1s for real-time
   useEffect(() => {
-    if (!order || !["out_for_delivery", "delivered"].includes(order.status)) return;
+    if (!order || !["out_for_delivery", "delivered"].includes(order.status)) {
+      setDriverPos(null);
+      return;
+    }
     const fetchLoc = () => {
       getDriverLocation(order.id).then((loc) => {
         if (loc) setDriverPos(loc);
       }).catch(() => {});
     };
     fetchLoc();
-    const interval = setInterval(fetchLoc, 5000);
+    const interval = setInterval(fetchLoc, 1000);
     return () => clearInterval(interval);
   }, [order]);
 
   // render leaflet map for driver tracking
   useEffect(() => {
-    if (!driverPos || !mapRef.current) return;
+    if (!mapRef.current) return;
     if (!mapInstanceRef.current) {
-      const map = L.map(mapRef.current).setView([driverPos.lat, driverPos.lng], 14);
+      const center = driverPos ? [driverPos.lat, driverPos.lng] : [0, 0];
+      const map = L.map(mapRef.current).setView(center, 14);
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "&copy; OpenStreetMap contributors",
       }).addTo(map);
       mapInstanceRef.current = map;
     }
-    if (driverMarkerRef.current) {
-      driverMarkerRef.current.setLatLng([driverPos.lat, driverPos.lng]);
-    } else {
-      driverMarkerRef.current = L.marker([driverPos.lat, driverPos.lng])
-        .addTo(mapInstanceRef.current)
-        .bindPopup("Driver");
+    if (driverPos) {
+      if (driverMarkerRef.current) {
+        driverMarkerRef.current.setLatLng([driverPos.lat, driverPos.lng]);
+      } else {
+        driverMarkerRef.current = L.marker([driverPos.lat, driverPos.lng])
+          .addTo(mapInstanceRef.current)
+          .bindPopup("Driver");
+      }
+      mapInstanceRef.current.setView([driverPos.lat, driverPos.lng]);
     }
-    mapInstanceRef.current.setView([driverPos.lat, driverPos.lng]);
-  }, [driverPos]);
+  }, [driverPos, order]);
 
   const handleReview = async (productId) => {
     try {
