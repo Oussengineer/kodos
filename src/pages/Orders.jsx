@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { getOrders } from "../api/orders";
 import { useAuthStore } from "../store/useAuthStore";
@@ -15,9 +15,15 @@ export default function Orders() {
   const [orders, setOrders] = useState([]);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
-  useEffect(() => {
+  const fetchOrders = useCallback(() => {
     if (isAuthenticated) getOrders().then(setOrders).catch(() => {});
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    fetchOrders();
+    const interval = setInterval(fetchOrders, 10000);
+    return () => clearInterval(interval);
+  }, [fetchOrders]);
 
   if (!isAuthenticated) {
     return (

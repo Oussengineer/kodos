@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { getAllOrders, updateOrderStatus } from "../../api/admin";
 
@@ -7,9 +7,15 @@ const STATUS_FLOW = ["pending", "confirmed", "preparing"];
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
 
-  useEffect(() => {
+  const fetchOrders = useCallback(() => {
     getAllOrders().then(setOrders).catch(() => {});
   }, []);
+
+  useEffect(() => {
+    fetchOrders();
+    const interval = setInterval(fetchOrders, 10000);
+    return () => clearInterval(interval);
+  }, [fetchOrders]);
 
   const advanceStatus = async (order) => {
     const idx = STATUS_FLOW.indexOf(order.status);

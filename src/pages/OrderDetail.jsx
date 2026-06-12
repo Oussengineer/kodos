@@ -26,7 +26,10 @@ export default function OrderDetail() {
   const driverMarkerRef = useRef(null);
 
   useEffect(() => {
-    getOrder(id).then(setOrder).catch(() => setOrder(null));
+    const fetchOrder = () => getOrder(id).then(setOrder).catch(() => setOrder(null));
+    fetchOrder();
+    const interval = setInterval(fetchOrder, 10000);
+    return () => clearInterval(interval);
   }, [id]);
 
   // driver tracking polling
