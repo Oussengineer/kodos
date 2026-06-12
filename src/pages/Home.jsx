@@ -6,10 +6,17 @@ const TYPE_ICONS = { restaurant: "🍽️", grocery: "🛒" };
 
 export default function Home() {
   const [restaurants, setRestaurants] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("restaurants");
 
   useEffect(() => {
-    getRestaurants().then(setRestaurants).catch(() => {});
+    setLoading(true);
+    setError("");
+    getRestaurants()
+      .then(setRestaurants)
+      .catch((e) => setError(e.response?.data?.error || e.message || "Failed to load"))
+      .finally(() => setLoading(false));
   }, []);
 
   const filtered = restaurants.filter((r) => r.type === activeTab);
@@ -32,8 +39,12 @@ export default function Home() {
         >🛒 Grocery</button>
       </div>
 
-      {filtered.length === 0 ? (
+      {loading ? (
         <div className="empty-state"><p>Loading...</p></div>
+      ) : error ? (
+        <div className="empty-state"><p style={{ color: "var(--danger)" }}>{error}</p></div>
+      ) : filtered.length === 0 ? (
+        <div className="empty-state"><p>No vendors available</p></div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {filtered.map((r) => (

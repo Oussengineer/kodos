@@ -8,12 +8,15 @@ export default function RestaurantDetail() {
   const { id } = useParams();
   const [restaurant, setRestaurant] = useState(null);
   const [products, setProducts] = useState([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    getRestaurant(id).then(setRestaurant).catch(() => {});
+    setError("");
+    getRestaurant(id).then(setRestaurant).catch((e) => setError(e.response?.data?.error || "Failed to load"));
     getProducts({ restaurantId: id }).then(setProducts).catch(() => {});
   }, [id]);
 
+  if (error) return <div className="page"><div className="empty-state"><p style={{ color: "var(--danger)" }}>{error}</p></div></div>;
   if (!restaurant) return <div className="page"><div className="empty-state"><p>Loading...</p></div></div>;
 
   return (

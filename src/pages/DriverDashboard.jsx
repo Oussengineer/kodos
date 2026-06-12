@@ -33,7 +33,7 @@ export default function DriverDashboard() {
     try {
       await acceptOrder(id);
       setActiveDeliveries([]);
-      navigate("/driver/active");
+      navigate("/active");
     } catch {
       setAccepting(null);
       fetchOrders();

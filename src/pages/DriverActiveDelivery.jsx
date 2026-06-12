@@ -140,7 +140,7 @@ export default function DriverActiveDelivery() {
         <h2>Active Deliveries</h2>
         <div className="empty-state">
           <p>No active deliveries</p>
-          <Link to="/driver" className="btn-primary">Find Orders</Link>
+          <Link to="/" className="btn-primary">Find Orders</Link>
         </div>
       </div>
     );

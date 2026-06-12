@@ -7,11 +7,15 @@ import ProductCard from "../components/ProductCard";
 export default function Grocery() {
   const [products, setProducts] = useState([]);
   const [store, setStore] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
+    setError("");
     getProducts({ type: "grocery" }).then(setProducts).catch(() => {});
-    getRestaurant(6).then(setStore).catch(() => {});
+    getRestaurant(6).then(setStore).catch((e) => setError(e.response?.data?.error || "Failed to load store"));
   }, []);
+
+  if (error) return <div className="page"><Link to="/" className="back-link">← Back</Link><div className="empty-state"><p style={{ color: "var(--danger)" }}>{error}</p></div></div>;
 
   return (
     <div className="page">

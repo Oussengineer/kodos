@@ -19,7 +19,7 @@ export default function DriverLogin() {
         return;
       }
       setAuth(data.user, data.token);
-      navigate("/driver");
+      navigate("/");
     } catch (err) {
       setError(err.response?.data?.error || "Invalid credentials");
     }

@@ -1,11 +1,18 @@
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 import { useDriverStore } from "../store/useDriverStore";
 
 export default function DriverLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
   const activeCount = useDriverStore((s) => s.activeDeliveries.length);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   const nav = [
     { path: "/", label: "Available", icon: "📋" },
@@ -17,7 +24,7 @@ export default function DriverLayout() {
     <div className="app-layout">
       <header className="driver-header">
         <span className="driver-greeting">Hey, {user?.name?.split(" ")[0] || "Driver"}</span>
-        <Link to="/login" className="driver-profile-link">👤</Link>
+        <button onClick={handleLogout} className="driver-profile-link" style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.2rem" }}>🚪</button>
       </header>
       <main className="main-content">
         <Outlet />

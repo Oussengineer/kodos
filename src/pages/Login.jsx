@@ -75,7 +75,7 @@ export default function Login() {
           </button>
         </p>
         <p className="auth-toggle" style={{ marginTop: 8 }}>
-          <Link to="/driver/login" className="link-btn">Are you a driver? Sign in here</Link>
+          <a href="/driver/login" className="link-btn">Are you a driver? Sign in here</a>
         </p>
       </div>
     </div>
