@@ -98,6 +98,7 @@ export default function DriverDashboard() {
                 <span>📍 {order.address}</span>
                 <span className="driver-order-total">{order.total.toFixed(2)} TND</span>
               </div>
+              {order.customerPhone && <p className="driver-order-phone">📞 {order.customerPhone}</p>}
               <button
                 className="btn-primary"
                 onClick={() => handleAccept(order.id)}

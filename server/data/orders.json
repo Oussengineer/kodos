@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "id": 1781346951296,
+    "userId": 1,
+    "items": [
+      {
+        "productId": 1,
+        "name": "Pizza",
+        "price": 15,
+        "quantity": 2,
+        "options": []
+      }
+    ],
+    "address": "Test",
+    "total": 30,
+    "deliveryFee": 0,
+    "latitude": null,
+    "longitude": null,
+    "status": "pending",
+    "createdAt": "2026-06-13T10:35:51.296Z"
+  }
+]

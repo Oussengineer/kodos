@@ -95,13 +95,17 @@
     "fullName": "الاسم الكامل",
     "email": "البريد الإلكتروني",
     "password": "كلمة المرور",
-    "phone": "الهاتف (اختياري)",
+    "phone": "الهاتف",
     "register": "تسجيل",
     "alreadyHaveAccount": "لديك حساب بالفعل؟ ",
     "dontHaveAccount": "ليس لديك حساب؟ ",
     "signInLink": "تسجيل الدخول",
     "registerLink": "التسجيل",
-    "driverSignIn": "هل أنت سائق؟ سجل الدخول هنا"
+    "driverSignIn": "هل أنت سائق؟ سجل الدخول هنا",
+    "verifyPhone": "تحقق من هاتفك",
+    "verifySent": "أدخل الرمز المرسل إلى",
+    "verifyCode": "رمز التحقق",
+    "verifySubmit": "تحقق وسجل"
   },
   "restaurantDetail": {
     "back": "→ رجوع",
@@ -210,6 +214,7 @@
       "title": "جميع الطلبات",
       "noOrders": "لا توجد طلبات بعد",
       "customer": "العميل:",
+      "phone": "الهاتف:",
       "address": "العنوان:",
       "items": "الأصناف:",
       "total": "المجموع:",

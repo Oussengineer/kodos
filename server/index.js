@@ -83,13 +83,16 @@ app.use("/assets", express.static(path.join(distDir, "admin", "assets")));
 app.use("/assets", express.static(path.join(distDir, "driver", "assets")));
 app.use("/icons", express.static(path.join(distDir, "customer", "icons")));
 
-app.get("/apk/:app.apk", async (req, res) => {
-  const apkPath = path.resolve(__dirname, "..", req.params.app === "admin" ? "android-admin" : req.params.app === "driver" ? "android-driver" : "android");
-  const releaseFile = path.join(apkPath, "app", "build", "outputs", "apk", "release", "app-release.apk");
-  const debugFile = path.join(apkPath, "app", "build", "outputs", "apk", "debug", "app-debug.apk");
-  const { existsSync } = await import("node:fs");
-  const file = existsSync(releaseFile) ? releaseFile : debugFile;
-  res.download(file, `kodos-${req.params.app}.apk`);
+const APK_URLS = {
+  customer: "https://github.com/Oussengineer/kodos/releases/download/v1.0.0/kodos-customer.apk",
+  admin: "https://github.com/Oussengineer/kodos/releases/download/v1.0.0/kodos-admin.apk",
+  driver: "https://github.com/Oussengineer/kodos/releases/download/v1.0.0/kodos-driver.apk",
+};
+
+app.get("/apk/:app.apk", (req, res) => {
+  const url = APK_URLS[req.params.app];
+  if (!url) return res.status(404).send("APK not found");
+  res.redirect(url);
 });
 
 app.get("/", (_req, res) => res.redirect("/customer/"));

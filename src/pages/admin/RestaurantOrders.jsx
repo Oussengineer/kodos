@@ -77,6 +77,7 @@ export default function RestaurantOrders() {
               </div>
               <div className="admin-order-body">
                 <p><strong>Customer:</strong> {order.customerName}</p>
+                {order.customerPhone && <p><strong>Phone:</strong> {order.customerPhone}</p>}
                 <p><strong>Address:</strong> {order.address}</p>
                 <p><strong>Items:</strong> {order.items.map((i) => i.name).join(", ")}</p>
                 <p><strong>Total:</strong> {order.total.toFixed(2)} {t("common.currency")}</p>

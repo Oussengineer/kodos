@@ -95,13 +95,17 @@
     "fullName": "Nom complet",
     "email": "Email",
     "password": "Mot de passe",
-    "phone": "Téléphone (optionnel)",
+    "phone": "Téléphone",
     "register": "S'inscrire",
     "alreadyHaveAccount": "Déjà un compte ? ",
     "dontHaveAccount": "Pas de compte ? ",
     "signInLink": "Se connecter",
     "registerLink": "S'inscrire",
-    "driverSignIn": "Vous êtes livreur ? Connectez-vous ici"
+    "driverSignIn": "Vous êtes livreur ? Connectez-vous ici",
+    "verifyPhone": "Vérifiez votre téléphone",
+    "verifySent": "Entrez le code envoyé au",
+    "verifyCode": "Code de vérification",
+    "verifySubmit": "Vérifier & S'inscrire"
   },
   "restaurantDetail": {
     "back": "← Retour",
@@ -210,6 +214,7 @@
       "title": "Toutes les commandes",
       "noOrders": "Aucune commande",
       "customer": "Client :",
+      "phone": "Téléphone :",
       "address": "Adresse :",
       "items": "Articles :",
       "total": "Total :",

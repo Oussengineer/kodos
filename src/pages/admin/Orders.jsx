@@ -77,6 +77,7 @@ export default function AdminOrders() {
                 </div>
                 <div className="admin-order-body">
                   <p><strong>{t("admin.orders.customer")}</strong> {order.customerName}</p>
+                  {order.customerPhone && <p><strong>{t("admin.orders.phone")}</strong> {order.customerPhone}</p>}
                   <p><strong>{t("admin.orders.address")}</strong> {order.address}</p>
                   <p><strong>{t("admin.orders.items")}</strong> {order.items.map((i) => i.name).join(", ")}</p>
                   <p><strong>{t("admin.orders.total")}</strong> {order.total.toFixed(2)} {t("common.currency")}</p>

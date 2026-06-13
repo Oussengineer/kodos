@@ -95,13 +95,17 @@
     "fullName": "Full Name",
     "email": "Email",
     "password": "Password",
-    "phone": "Phone (optional)",
+    "phone": "Phone",
     "register": "Register",
     "alreadyHaveAccount": "Already have an account? ",
     "dontHaveAccount": "Don't have an account? ",
     "signInLink": "Sign In",
     "registerLink": "Register",
-    "driverSignIn": "Are you a driver? Sign in here"
+    "driverSignIn": "Are you a driver? Sign in here",
+    "verifyPhone": "Verify Your Phone",
+    "verifySent": "Enter the code sent to",
+    "verifyCode": "Verification Code",
+    "verifySubmit": "Verify & Register"
   },
   "restaurantDetail": {
     "back": "← Back",
@@ -210,6 +214,7 @@
       "title": "All Orders",
       "noOrders": "No orders yet",
       "customer": "Customer:",
+      "phone": "Phone:",
       "address": "Address:",
       "items": "Items:",
       "total": "Total:",

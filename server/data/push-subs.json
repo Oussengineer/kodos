@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "userId": 1,
+    "role": "admin",
+    "endpoint": "https://test.push.com/abc",
+    "keys": {
+      "p256dh": "test",
+      "auth": "test"
+    },
+    "platform": "web",
+    "createdAt": "2026-06-13T10:34:20.918Z"
+  }
+]
