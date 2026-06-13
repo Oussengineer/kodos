@@ -9,6 +9,7 @@ import AdminRestaurants from "./pages/admin/Restaurants";
 import AdminRestaurantForm from "./pages/admin/RestaurantForm";
 import RestaurantUserForm from "./pages/admin/RestaurantUserForm";
 import DriverUserForm from "./pages/admin/DriverUserForm";
+import AdminUsers from "./pages/admin/Users";
 import RestaurantOrders from "./pages/admin/RestaurantOrders";
 import { useAuthStore } from "./store/useAuthStore";
 import SplashScreen from "./components/SplashScreen";
@@ -40,6 +41,7 @@ export default function AppAdmin() {
             <Route path="/restaurants/edit/:id" element={<AdminRestaurantForm />} />
             <Route path="/restaurants/account/new" element={<RestaurantUserForm />} />
             <Route path="/drivers/new" element={<DriverUserForm />} />
+            <Route path="/users" element={<AdminUsers />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>

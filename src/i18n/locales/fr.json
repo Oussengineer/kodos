@@ -187,7 +187,8 @@
       "orders": "Commandes",
       "products": "Produits",
       "vendors": "Vendeurs",
-      "drivers": "Livreurs"
+      "drivers": "Livreurs",
+      "users": "Utilisateurs"
     },
     "dashboard": {
       "loading": "Chargement du tableau de bord...",
@@ -311,6 +312,23 @@
       "submit": "Créer le compte",
       "success": "Compte créé pour {{name}}",
       "error": "Échec de la création"
+    },
+    "users": {
+      "title": "Tous les utilisateurs",
+      "noUsers": "Aucun utilisateur trouvé",
+      "editTitle": "Modifier l'utilisateur",
+      "name": "Nom",
+      "email": "Email",
+      "phone": "Téléphone",
+      "role": "Rôle",
+      "newPassword": "Nouveau mot de passe (laisser vide pour conserver)",
+      "phonePlaceholder": "+216 XX XXX XXX",
+      "passwordPlaceholder": "Laisser vide pour conserver",
+      "role_customer": "Client",
+      "role_driver": "Livreur",
+      "role_restaurant": "Restaurant",
+      "role_admin": "Admin",
+      "deleteConfirm": "Supprimer l'utilisateur {{name}} ?"
     },
     "driverUserForm": {
       "back": "← Tableau de bord",

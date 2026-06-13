@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { readFile, writeFile } from "node:fs/promises";
+import { notifyNewOrder } from "../utils/push.js";
 
 const router = Router();
 const ORDERS_PATH = new URL("../data/orders.json", import.meta.url);
@@ -70,6 +71,7 @@ router.post("/", auth, async (req, res) => {
     };
     orders.push(order);
     await writeFile(ORDERS_PATH, JSON.stringify(orders, null, 2));
+    notifyNewOrder(order).catch(() => {});
     res.status(201).json(order);
   } catch (err) {
     res.status(500).json({ error: err.message });

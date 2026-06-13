@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../store/useAuthStore";
 import { useDriverStore } from "../store/useDriverStore";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { setupPushNotifications } from "../utils/pushClient";
 
 const isNative = typeof window !== "undefined" && window.Capacitor?.isNativePlatform();
 
@@ -13,6 +14,10 @@ export default function DriverLayout() {
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuthStore();
   const activeCount = useDriverStore((s) => s.activeDeliveries.length);
+
+  useEffect(() => {
+    if (isAuthenticated) setupPushNotifications();
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (!isAuthenticated) {

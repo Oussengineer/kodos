@@ -10,14 +10,20 @@ export default function RestaurantOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const seenIds = useRef(new Set());
+  const isFirstFetch = useRef(true);
 
   const fetchOrders = useCallback(() => {
     getRestaurantOrders()
       .then((data) => {
-        for (const o of data) {
-          if (!seenIds.current.has(o.id)) {
-            seenIds.current.add(o.id);
-            sendNotification(t("admin.restaurantOrders.newOrder"), `Order #${o.id} — ${o.customerName} — ${o.total.toFixed(2)} ${t("common.currency")}`);
+        if (isFirstFetch.current) {
+          isFirstFetch.current = false;
+          for (const o of data) seenIds.current.add(o.id);
+        } else {
+          for (const o of data) {
+            if (!seenIds.current.has(o.id)) {
+              seenIds.current.add(o.id);
+              sendNotification(t("admin.restaurantOrders.newOrder"), `Order #${o.id} — ${o.customerName} — ${o.total.toFixed(2)} ${t("common.currency")}`);
+            }
           }
         }
         setOrders(data);
@@ -27,8 +33,7 @@ export default function RestaurantOrders() {
   }, []);
 
   useEffect(() => {
-    requestNotifyPermission();
-    fetchOrders();
+    requestNotifyPermission().then(fetchOrders);
     const interval = setInterval(fetchOrders, 3000);
     return () => clearInterval(interval);
   }, [fetchOrders]);

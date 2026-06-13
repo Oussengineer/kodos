@@ -1,7 +1,9 @@
 import { Outlet, Link, useLocation, useNavigate, Navigate } from "react-router-dom";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../store/useAuthStore";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { setupPushNotifications } from "../utils/pushClient";
 
 const isNative = typeof window !== "undefined" && window.Capacitor?.isNativePlatform();
 
@@ -10,6 +12,10 @@ export default function AdminLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuthStore();
+
+  useEffect(() => {
+    if (isAuthenticated) setupPushNotifications();
+  }, [isAuthenticated]);
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -74,6 +80,7 @@ export default function AdminLayout() {
     { path: "/products", label: t("admin.layout.products"), icon: "🍽️" },
     { path: "/restaurants", label: t("admin.layout.vendors"), icon: "🏪" },
     { path: "/drivers/new", label: t("admin.layout.drivers"), icon: "🚚" },
+    { path: "/users", label: t("admin.layout.users"), icon: "👥" },
   ];
 
   return (

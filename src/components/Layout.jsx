@@ -1,7 +1,10 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useCartStore } from "../store/useCartStore";
+import { useAuthStore } from "../store/useAuthStore";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { setupPushNotifications } from "../utils/pushClient";
 
 const isNative = typeof window !== "undefined" && window.Capacitor?.isNativePlatform();
 
@@ -9,6 +12,11 @@ export default function Layout() {
   const { t } = useTranslation();
   const location = useLocation();
   const itemCount = useCartStore((s) => s.getItemCount());
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
+  useEffect(() => {
+    if (isAuthenticated) setupPushNotifications();
+  }, [isAuthenticated]);
 
   const nav = [
     { path: "/", label: t("nav.home"), icon: "🍽️" },

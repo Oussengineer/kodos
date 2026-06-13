@@ -44,3 +44,12 @@ export const registerRestaurantUser = (data) =>
 
 export const registerDriverUser = (data) =>
   client.post("/admin/drivers/register", data).then((r) => r.data);
+
+export const getAdminUsers = () =>
+  client.get("/admin/users").then((r) => r.data);
+
+export const updateAdminUser = (id, data) =>
+  client.put(`/admin/users/${id}`, data).then((r) => r.data);
+
+export const deleteAdminUser = (id) =>
+  client.delete(`/admin/users/${id}`).then((r) => r.data);

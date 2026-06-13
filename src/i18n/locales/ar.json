@@ -187,7 +187,8 @@
       "orders": "الطلبات",
       "products": "المنتجات",
       "vendors": "البائعون",
-      "drivers": "السائقون"
+      "drivers": "السائقون",
+      "users": "المستخدمون"
     },
     "dashboard": {
       "loading": "جارٍ تحميل لوحة التحكم...",
@@ -311,6 +312,23 @@
       "submit": "إنشاء الحساب",
       "success": "تم إنشاء الحساب لـ {{name}}",
       "error": "فشل إنشاء الحساب"
+    },
+    "users": {
+      "title": "جميع المستخدمين",
+      "noUsers": "لم يتم العثور على مستخدمين",
+      "editTitle": "تعديل المستخدم",
+      "name": "الاسم",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "role": "الدور",
+      "newPassword": "كلمة مرور جديدة (اتركها فارغة للاحتفاظ بها)",
+      "phonePlaceholder": "+216 XX XXX XXX",
+      "passwordPlaceholder": "اتركها فارغة للاحتفاظ بالحالية",
+      "role_customer": "عميل",
+      "role_driver": "سائق",
+      "role_restaurant": "مطعم",
+      "role_admin": "مشرف",
+      "deleteConfirm": "حذف المستخدم {{name}}؟"
     },
     "driverUserForm": {
       "back": "→ لوحة التحكم",

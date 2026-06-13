@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { getActiveDeliveries, updateDeliveryStatus, updateDriverLocation } from "../api/driver";
 import { useDriverStore } from "../store/useDriverStore";
 import { useTranslation } from "react-i18next";
+import { requestNotifyPermission, sendNotification } from "../utils/notify";
 import "../utils/leafletIcons";
 import L from "leaflet";
 
@@ -19,11 +20,24 @@ export default function DriverActiveDelivery() {
   const driverMarkerRef = useRef(null);
   const routeLineRef = useRef(null);
   const watchIdRef = useRef(null);
+  const seenIds = useRef(new Set());
+  const isFirstFetch = useRef(true);
   const { t } = useTranslation();
 
   const fetchActive = useCallback(async () => {
     try {
       const data = await getActiveDeliveries();
+      if (isFirstFetch.current) {
+        isFirstFetch.current = false;
+        for (const o of data) seenIds.current.add(o.id);
+      } else {
+        for (const o of data) {
+          if (!seenIds.current.has(o.id)) {
+            seenIds.current.add(o.id);
+            sendNotification("New Delivery Assigned!", `Order #${o.id} — ${o.customerName} — ${o.total.toFixed(2)} TND`);
+          }
+        }
+      }
       setDeliveries(data);
       setActiveDeliveries(data);
     } catch {} finally {
@@ -33,7 +47,7 @@ export default function DriverActiveDelivery() {
   }, [setActiveDeliveries]);
 
   useEffect(() => {
-    fetchActive();
+    requestNotifyPermission().then(fetchActive);
     const interval = setInterval(fetchActive, 10000);
     return () => clearInterval(interval);
   }, [fetchActive]);

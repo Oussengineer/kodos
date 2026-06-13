@@ -187,7 +187,8 @@
       "orders": "Orders",
       "products": "Products",
       "vendors": "Vendors",
-      "drivers": "Drivers"
+      "drivers": "Drivers",
+      "users": "Users"
     },
     "dashboard": {
       "loading": "Loading dashboard...",
@@ -311,6 +312,23 @@
       "submit": "Create Account",
       "success": "Account created for {{name}}",
       "error": "Failed to create account"
+    },
+    "users": {
+      "title": "All Users",
+      "noUsers": "No users found",
+      "editTitle": "Edit User",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "role": "Role",
+      "newPassword": "New Password (leave blank to keep current)",
+      "phonePlaceholder": "+216 XX XXX XXX",
+      "passwordPlaceholder": "Leave blank to keep current",
+      "role_customer": "Customer",
+      "role_driver": "Driver",
+      "role_restaurant": "Restaurant",
+      "role_admin": "Admin",
+      "deleteConfirm": "Delete user {{name}}?"
     },
     "driverUserForm": {
       "back": "← Dashboard",

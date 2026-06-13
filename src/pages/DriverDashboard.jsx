@@ -18,14 +18,20 @@ export default function DriverDashboard() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const seenIds = useRef(new Set());
+  const isFirstFetch = useRef(true);
 
   const fetchOrders = useCallback(() => {
     getAvailableOrders()
       .then((data) => {
-        for (const o of data) {
-          if (!seenIds.current.has(o.id)) {
-            seenIds.current.add(o.id);
-            sendNotification("Delivery Available!", `Order #${o.id} — ${o.total.toFixed(2)} TND`);
+        if (isFirstFetch.current) {
+          isFirstFetch.current = false;
+          for (const o of data) seenIds.current.add(o.id);
+        } else {
+          for (const o of data) {
+            if (!seenIds.current.has(o.id)) {
+              seenIds.current.add(o.id);
+              sendNotification("Delivery Available!", `Order #${o.id} — ${o.total.toFixed(2)} TND`);
+            }
           }
         }
         setOrders(data);
@@ -35,8 +41,7 @@ export default function DriverDashboard() {
   }, []);
 
   useEffect(() => {
-    requestNotifyPermission();
-    fetchOrders();
+    requestNotifyPermission().then(fetchOrders);
     const interval = setInterval(fetchOrders, 15000);
     return () => clearInterval(interval);
   }, [fetchOrders]);

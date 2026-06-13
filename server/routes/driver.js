@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { readFile, writeFile } from "node:fs/promises";
+import { notifyDeliveryAssigned } from "../utils/push.js";
 
 const router = Router();
 const ORDERS_PATH = new URL("../data/orders.json", import.meta.url);
@@ -100,6 +101,7 @@ router.post("/orders/:id/accept", driverAuth, async (req, res) => {
     orders[idx].status = "out_for_delivery";
     orders[idx].acceptedAt = new Date().toISOString();
     await writeFile(ORDERS_PATH, JSON.stringify(orders, null, 2));
+    notifyDeliveryAssigned(orders[idx]).catch(() => {});
     res.json(orders[idx]);
   } catch (err) {
     res.status(500).json({ error: err.message });

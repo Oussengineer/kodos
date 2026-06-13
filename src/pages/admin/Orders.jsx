@@ -19,14 +19,20 @@ export default function AdminOrders() {
     cancelled: null,
   };
   const seenIds = useRef(new Set());
+  const isFirstFetch = useRef(true);
 
   const fetchOrders = useCallback(async () => {
     try {
       const data = await getAllOrders();
-      for (const o of data) {
-        if (!seenIds.current.has(o.id)) {
-          seenIds.current.add(o.id);
-          sendNotification(t("admin.orders.newOrder"), `Order #${o.id} — ${o.customerName} — ${o.total.toFixed(2)} ${t("common.currency")}`);
+      if (isFirstFetch.current) {
+        isFirstFetch.current = false;
+        for (const o of data) seenIds.current.add(o.id);
+      } else {
+        for (const o of data) {
+          if (!seenIds.current.has(o.id)) {
+            seenIds.current.add(o.id);
+            sendNotification(t("admin.orders.newOrder"), `Order #${o.id} — ${o.customerName} — ${o.total.toFixed(2)} ${t("common.currency")}`);
+          }
         }
       }
       setOrders(data);
@@ -35,8 +41,7 @@ export default function AdminOrders() {
   }, []);
 
   useEffect(() => {
-    requestNotifyPermission();
-    fetchOrders();
+    requestNotifyPermission().then(fetchOrders);
     const interval = setInterval(fetchOrders, 15000);
     return () => clearInterval(interval);
   }, [fetchOrders]);

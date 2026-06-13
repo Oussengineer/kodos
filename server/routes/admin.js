@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { readFile, writeFile } from "node:fs/promises";
 import bcrypt from "bcryptjs";
+import { notifyDeliveryAvailable } from "../utils/push.js";
 
 const router = Router();
 const SALT_ROUNDS = 10;
@@ -77,6 +78,9 @@ router.patch("/orders/:id/status", adminAuth, async (req, res) => {
     }
     orders[idx].status = req.body.status;
     await writeFile(ORDERS_PATH, JSON.stringify(orders, null, 2));
+    if (req.body.status === "confirmed" || req.body.status === "preparing") {
+      notifyDeliveryAvailable(orders[idx]).catch(() => {});
+    }
     res.json(orders[idx]);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -236,6 +240,52 @@ router.patch("/restaurant/orders/:id/status", restaurantAuth, async (req, res) =
     orders[idx].status = req.body.status;
     await writeFile(ORDERS_PATH, JSON.stringify(orders, null, 2));
     res.json(orders[idx]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ---- User management (admin only) ----
+router.get("/users", adminAuth, async (_req, res) => {
+  try {
+    const users = await getJSON(USERS_PATH);
+    const safe = users.map(({ password, ...u }) => u);
+    res.json(safe);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.put("/users/:id", adminAuth, async (req, res) => {
+  try {
+    const users = await getJSON(USERS_PATH);
+    const idx = users.findIndex((u) => u.id === Number(req.params.id));
+    if (idx === -1) return res.status(404).json({ error: "User not found" });
+    const allowedFields = ["name", "email", "phone", "role"];
+    for (const key of allowedFields) {
+      if (req.body[key] !== undefined) users[idx][key] = req.body[key];
+    }
+    if (req.body.password) {
+      users[idx].password = await bcrypt.hash(req.body.password, SALT_ROUNDS);
+    }
+    await writeFile(USERS_PATH, JSON.stringify(users, null, 2));
+    const { password, ...safe } = users[idx];
+    res.json(safe);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete("/users/:id", adminAuth, async (req, res) => {
+  try {
+    const users = await getJSON(USERS_PATH);
+    const idx = users.findIndex((u) => u.id === Number(req.params.id));
+    if (idx === -1) return res.status(404).json({ error: "User not found" });
+    if (users[idx].role === "admin") return res.status(403).json({ error: "Cannot delete admin account" });
+    const [deleted] = users.splice(idx, 1);
+    await writeFile(USERS_PATH, JSON.stringify(users, null, 2));
+    const { password, ...safe } = deleted;
+    res.json(safe);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

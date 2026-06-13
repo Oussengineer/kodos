@@ -1,7 +1,18 @@
 import { LocalNotifications } from "@capacitor/local-notifications";
 
+let notifIdCounter = 1;
+
 function isCapacitor() {
   return typeof window !== "undefined" && window.Capacitor?.isNativePlatform();
+}
+
+function playNotificationSound() {
+  try {
+    const audio = new Audio();
+    audio.src = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
+    audio.volume = 0.5;
+    audio.play().catch(() => {});
+  } catch {}
 }
 
 export async function requestNotifyPermission() {
@@ -24,11 +35,12 @@ export async function sendNotification(title, body) {
           {
             title,
             body,
-            id: Date.now(),
+            id: notifIdCounter++,
             schedule: { at: new Date() },
             sound: "default",
             smallIcon: "ic_stat_icon_default",
             iconColor: "#111111",
+            actionTypeId: "OPEN_APP",
           },
         ],
       });
@@ -38,6 +50,7 @@ export async function sendNotification(title, body) {
     return;
   }
   if (!("Notification" in window) || Notification.permission !== "granted") return;
+  playNotificationSound();
   try {
     new Notification(title, { body, icon: "/favicon.svg" });
   } catch {
