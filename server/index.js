@@ -9,6 +9,7 @@ import orderRoutes from "./routes/orders.js";
 import adminRoutes from "./routes/admin.js";
 import driverRoutes from "./routes/driver.js";
 import restaurantRoutes from "./routes/restaurants.js";
+import verifyRoutes from "./routes/verify.js";
 import pushRoutes from "./routes/push.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -24,6 +25,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/driver", driverRoutes);
 app.use("/api/restaurants", restaurantRoutes);
+app.use("/api/verify", verifyRoutes);
 app.use("/api/push", pushRoutes);
 
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
@@ -81,9 +83,12 @@ app.use("/assets", express.static(path.join(distDir, "admin", "assets")));
 app.use("/assets", express.static(path.join(distDir, "driver", "assets")));
 app.use("/icons", express.static(path.join(distDir, "customer", "icons")));
 
-app.get("/apk/:app.apk", (req, res) => {
+app.get("/apk/:app.apk", async (req, res) => {
   const apkPath = path.resolve(__dirname, "..", req.params.app === "admin" ? "android-admin" : req.params.app === "driver" ? "android-driver" : "android");
-  const file = path.join(apkPath, "app", "build", "outputs", "apk", "debug", "app-debug.apk");
+  const releaseFile = path.join(apkPath, "app", "build", "outputs", "apk", "release", "app-release.apk");
+  const debugFile = path.join(apkPath, "app", "build", "outputs", "apk", "debug", "app-debug.apk");
+  const { existsSync } = await import("node:fs");
+  const file = existsSync(releaseFile) ? releaseFile : debugFile;
   res.download(file, `kodos-${req.params.app}.apk`);
 });
 
