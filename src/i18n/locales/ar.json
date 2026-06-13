@@ -101,11 +101,7 @@
     "dontHaveAccount": "ليس لديك حساب؟ ",
     "signInLink": "تسجيل الدخول",
     "registerLink": "التسجيل",
-    "driverSignIn": "هل أنت سائق؟ سجل الدخول هنا",
-    "verifyPhone": "تحقق من هاتفك",
-    "verifySent": "أدخل الرمز المرسل إلى",
-    "verifyCode": "رمز التحقق",
-    "verifySubmit": "تحقق وسجل"
+    "driverSignIn": "هل أنت سائق؟ سجل الدخول هنا"
   },
   "restaurantDetail": {
     "back": "→ رجوع",

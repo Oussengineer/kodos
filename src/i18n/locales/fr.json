@@ -101,11 +101,7 @@
     "dontHaveAccount": "Pas de compte ? ",
     "signInLink": "Se connecter",
     "registerLink": "S'inscrire",
-    "driverSignIn": "Vous êtes livreur ? Connectez-vous ici",
-    "verifyPhone": "Vérifiez votre téléphone",
-    "verifySent": "Entrez le code envoyé au",
-    "verifyCode": "Code de vérification",
-    "verifySubmit": "Vérifier & S'inscrire"
+    "driverSignIn": "Vous êtes livreur ? Connectez-vous ici"
   },
   "restaurantDetail": {
     "back": "← Retour",

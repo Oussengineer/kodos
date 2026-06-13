@@ -10,7 +10,7 @@ import orderRoutes from "./routes/orders.js";
 import adminRoutes from "./routes/admin.js";
 import driverRoutes from "./routes/driver.js";
 import restaurantRoutes from "./routes/restaurants.js";
-import verifyRoutes from "./routes/verify.js";
+
 import pushRoutes from "./routes/push.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -26,7 +26,6 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/driver", driverRoutes);
 app.use("/api/restaurants", restaurantRoutes);
-app.use("/api/verify", verifyRoutes);
 app.use("/api/push", pushRoutes);
 
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));

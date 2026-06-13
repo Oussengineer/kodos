@@ -154,6 +154,16 @@ export async function sendFcmToRoles(roles, title, body) {
   return results;
 }
 
+export async function notifyNewUser(user) {
+  const title = "New User Registration!";
+  const body = `${user.name} (${user.phone || "no phone"}) — ${user.email}`;
+  const url = "/admin/users";
+  await Promise.all([
+    sendPushToRoles(["admin"], title, body, url),
+    sendFcmToRoles(["admin"], title, body),
+  ]);
+}
+
 export async function notifyNewOrder(order) {
   const title = "New Order!";
   const body = `Order #${order.id} — ${order.total?.toFixed(2)} TND`;
