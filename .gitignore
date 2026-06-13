@@ -30,3 +30,7 @@ android-driver/
 capacitor.config.json
 *.local
 kodos-release.keystore
+
+# Service account key
+server/service-account.json
+

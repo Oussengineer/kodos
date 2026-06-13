@@ -94,11 +94,15 @@ export async function sendFcmToRoles(roles, title, body) {
   try {
     const admin = await import("firebase-admin");
     if (!admin.apps.length) {
-      try {
-        admin.initializeApp({ credential: admin.credential.applicationDefault() });
-      } catch {
-        throw new Error("no service account");
+      let credential;
+      const b64 = process.env.FIREBASE_SERVICE_ACCOUNT_B64;
+      if (b64) {
+        const json = JSON.parse(Buffer.from(b64, "base64").toString("utf-8"));
+        credential = admin.credential.cert(json);
+      } else {
+        credential = admin.credential.applicationDefault();
       }
+      admin.initializeApp({ credential });
     }
     for (const sub of targets) {
       try {
@@ -113,7 +117,7 @@ export async function sendFcmToRoles(roles, title, body) {
       }
     }
     return results;
-  } catch {
+  } catch (e) {
     // Fallback to legacy HTTP API with server key
   }
 
