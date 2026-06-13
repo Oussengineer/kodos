@@ -9,8 +9,8 @@ const SALT_ROUNDS = 10;
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password, phone } = req.body;
-    if (!name || !email || !password) {
-      return res.status(400).json({ error: "Name, email, and password required" });
+    if (!name || !email || !password || !phone) {
+      return res.status(400).json({ error: "Name, email, password, and phone required" });
     }
     const data = await readFile(USERS_PATH, "utf-8");
     const users = JSON.parse(data);

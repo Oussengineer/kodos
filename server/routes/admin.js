@@ -59,7 +59,7 @@ router.get("/orders", adminAuth, async (_req, res) => {
     const users = await getJSON(USERS_PATH);
     const enriched = orders.map((o) => {
       const u = users.find((u) => u.id === o.userId);
-      return { ...o, customerName: u?.name || "Unknown" };
+      return { ...o, customerName: u?.name || "Unknown", customerPhone: u?.phone || "" };
     });
     res.json(enriched.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
   } catch (err) {
@@ -216,7 +216,7 @@ router.get("/restaurant/orders", restaurantAuth, async (req, res) => {
     });
     const enriched = filtered.map((o) => {
       const u = users.find((u) => u.id === o.userId);
-      return { ...o, customerName: u?.name || "Unknown" };
+      return { ...o, customerName: u?.name || "Unknown", customerPhone: u?.phone || "" };
     });
     res.json(enriched.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
   } catch (err) {
