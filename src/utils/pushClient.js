@@ -62,9 +62,11 @@ export async function setupPushNotifications() {
       const scope = appPath ? `/${appPath}/push-scope/` : "/push-scope/";
       const swUrl = appPath ? `/${appPath}/push-sw.js` : "/push-sw.js";
 
-      const existing = await navigator.serviceWorker.getRegistration(scope);
-      if (existing) {
-        const sub = await subscribeWebPush(existing);
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      const pushReg = registrations.find((r) => r.scope === scope);
+
+      if (pushReg) {
+        const sub = await subscribeWebPush(pushReg);
         if (sub) {
           await client.post("/push/subscribe", {
             endpoint: sub.endpoint,
