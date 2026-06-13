@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import path from "node:path";
+import { Readable } from "node:stream";
 import { fileURLToPath } from "node:url";
 import authRoutes from "./routes/auth.js";
 import productRoutes from "./routes/products.js";
@@ -89,10 +90,18 @@ const APK_URLS = {
   driver: "https://github.com/Oussengineer/kodos/releases/download/v1.0.0/kodos-driver.apk",
 };
 
-app.get("/apk/:app.apk", (req, res) => {
+app.get("/apk/:app.apk", async (req, res) => {
   const url = APK_URLS[req.params.app];
   if (!url) return res.status(404).send("APK not found");
-  res.redirect(url);
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return res.status(502).send("Failed to fetch APK");
+    res.setHeader("Content-Disposition", `attachment; filename="kodos-${req.params.app}.apk"`);
+    res.setHeader("Content-Type", "application/vnd.android.package-archive");
+    Readable.fromWeb(response.body).pipe(res);
+  } catch {
+    res.status(502).send("Failed to fetch APK");
+  }
 });
 
 app.get("/", (_req, res) => res.redirect("/customer/"));
